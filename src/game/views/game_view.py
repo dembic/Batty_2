@@ -49,7 +49,6 @@ class GameView(arcade.View):
         """Handle keyboard input to return menu."""
         if key == arcade.key.LEFT:
             self.paddle.move_left()
-            print("move left")
         elif key == arcade.key.RIGHT:
             self.paddle.move_right()
         elif key == arcade.key.SPACE and self.ball.is_attached:

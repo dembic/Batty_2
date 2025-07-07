@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="com.obiscr.chatgpt.settings.EasyCodeState">
+    <option name="projectFiles" value="$PROJECT_DIR$/src/game/models/__init__.py;C:/Users/dembi/PycharmProjects/Batty_2/src/game/models/ball.py;C:/Users/dembi/PycharmProjects/Batty_2/src/game/models/brick.py;C:/Users/dembi/PycharmProjects/Batty_2/src/game/models/enemy.py;C:/Users/dembi/PycharmProjects/Batty_2/src/game/models/paddle.py;C:/Users/dembi/PycharmProjects/Batty_2/src/game/utils/__init__.py;C:/Users/dembi/PycharmProjects/Batty_2/src/game/utils/helpers.py;C:/Users/dembi/PycharmProjects/Batty_2/src/game/views/__init__.py;C:/Users/dembi/PycharmProjects/Batty_2/src/game/views/game_view.py;C:/Users/dembi/PycharmProjects/Batty_2/src/game/views/high_scores_view.py;C:/Users/dembi/PycharmProjects/Batty_2/src/game/views/menu_view.py;C:/Users/dembi/PycharmProjects/Batty_2/src/game/views/settings_view.py;C:/Users/dembi/PycharmProjects/Batty_2/src/game/__init__.py;C:/Users/dembi/PycharmProjects/Batty_2/src/game/config.py;C:/Users/dembi/PycharmProjects/Batty_2/main.py;C:/Users/dembi/PycharmProjects/Batty_2/README.md" />
+  </component>
+</project>

@@ -12,6 +12,8 @@ class Ball(arcade.Sprite):
         self.change_y = 0
         self.previous_y = 0
 
+        self.rotation_speed = 180 # Градусов в секунду
+
         self.is_attached = True
 
     def attach_to_paddle(self, paddle):
@@ -38,6 +40,10 @@ class Ball(arcade.Sprite):
         self.previous_y = self.center_y
         self.center_x += self.change_x * delta_time
         self.center_y += self.change_y * delta_time
+
+        # Врашение мяча
+        self.angle += self.rotation_speed * delta_time
+        self.angle %= 360
 
         # Отражение от левой/правой стены
         if self.left <= 0:
