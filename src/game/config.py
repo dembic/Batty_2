@@ -38,3 +38,7 @@ GAME_OVER_TEXT = 48
 # For blinking
 BLINKING_INTERVAL = 0.1
 MAX_BLINKING_COUNT = 30
+
+# for sounds
+SOUND_VOLUME = 0.5
+SOUND_BOUNCE = "assets/sounds/bounce.mp3"

@@ -5,7 +5,7 @@ from .blinking import Blinking
 class Paddle(Blinking):
     """Class representing the paddle in the Batty game."""
     def __init__(self):
-        super().__init__("assets/images/paddle.png", scale=1.0)
+        super().__init__("assets/images/paddle.png", scale=SCALE)
         self.center_x = SCREEN_WIDTH // 2 # Starting paddle position
         self.center_y = PADDLE_UP_Y
         self.change_x = 0 # speed
@@ -51,8 +51,6 @@ class Paddle(Blinking):
         # Обновляем эффект мигания если активен
         if self.is_blinking:
             super().update_blinking(delta_time)
-            if not self.is_blinking: # После завершения мигания
-                self.alpha = 255 # Visible
 
     def move_left(self):
         """Move the paddle left"""

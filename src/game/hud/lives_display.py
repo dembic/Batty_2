@@ -4,7 +4,6 @@ from ..models.blinking import Blinking
 
 class LivesDisplay:
     def __init__(self, x=X, y=Y, spacing=SPACING, scale=SCALE):
-        self.sprite = arcade.Sprite("assets/images/lives.png")
         self.max_lives = MAX_LIVES
         self.current_lives = self.max_lives
         self.x = x
@@ -30,7 +29,7 @@ class LivesDisplay:
             self.current_lives -= 1
             # blinking last sprite
             if self.current_lives < self.max_lives:
-                self.lives_sprites[self.current_lives].start_blinking()
+                self.lives_sprites[self.current_lives].start_blinking(use_scale=True)
 
     def gain_life(self):
         if self.current_lives < self.max_lives:

@@ -1,6 +1,6 @@
 # src/game/models/ball.py
 from src.game.config import *
-from ..hud import LivesDisplay
+
 import math
 
 class Ball(arcade.Sprite):
@@ -16,6 +16,8 @@ class Ball(arcade.Sprite):
         self.rotation_speed = 180 # Градусов в секунду
 
         self.is_attached = True
+
+        self.sound_bounce = arcade.load_sound(SOUND_BOUNCE)
 
     def attach_to_paddle(self, paddle):
         """Привязать мяч к платформе"""
@@ -66,6 +68,7 @@ class Ball(arcade.Sprite):
         if arcade.check_for_collision(self, paddle):
             if self.change_y < 0: # Если мяч падал вниз
                 """self.change_y *= -1 """# No physics
+                arcade.play_sound(sound=self.sound_bounce, volume=SOUND_VOLUME)
                 self.bounce_from_paddle(paddle)
 
     def bounce_from_paddle(self, paddle):

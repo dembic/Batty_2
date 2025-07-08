@@ -51,7 +51,7 @@ class GameView(arcade.View):
         # Обработка потери жизни если мяч упал
         if self.ball.bottom <= 0:
             self.lives_display.lose_life()
-            self.paddle.start_blinking()
+            self.paddle.start_blinking(use_scale=False)
             self.ball.reset()
             self.ball.attach_to_paddle(self.paddle)
 
