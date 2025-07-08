@@ -1,5 +1,6 @@
 from src.game.config import *
 from ..models import Paddle, Ball
+from ..hud import LivesDisplay
 
 # Placeholder classes with manager initialized in __init__
 class GameView(arcade.View):
@@ -19,6 +20,7 @@ class GameView(arcade.View):
         )
 
         # Game objects экземпляры классов
+        self.lives_display = LivesDisplay(x=X, y=Y, spacing=SPACING, scale=SCALE)
         self.paddle = Paddle()
         self.ball = Ball()
         self.ball.attach_to_paddle(self.paddle)
@@ -36,6 +38,7 @@ class GameView(arcade.View):
         self.clear()
         self.game_view.draw()
         self.sprite_list.draw()
+        self.lives_display.draw()
 
     def on_update(self, delta_time: float):
         self.paddle.update(delta_time)
@@ -44,6 +47,22 @@ class GameView(arcade.View):
 
         if self.ball.is_attached:
             self.ball.attach_to_paddle(self.paddle)
+
+        # Обработка потери жизни если мяч упал
+        if self.ball.bottom <= 0:
+            self.lives_display.lose_life()
+            self.paddle.start_blinking()
+            self.ball.reset()
+            self.ball.attach_to_paddle(self.paddle)
+
+        # Обновление миганя для жизней и платформы
+        self.lives_display.update(delta_time)
+
+        # Обработка конца игры
+        if self.lives_display.current_lives == 0:
+            from .game_over_view import GameOverView
+            game_over_view = GameOverView()
+            self.window.show_view(game_over_view)
 
     def on_key_press(self, key, modifiers):
         """Handle keyboard input to return menu."""

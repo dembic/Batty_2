@@ -24,3 +24,17 @@ BALL_COLOR = (0, 255, 0)
 # for fonts
 DEFAULT_FONT_SIZE = 20
 TITLE_FONT_SIZE = 48
+
+# for lives
+MAX_LIVES = 3
+X = 20
+Y = 580
+SPACING = 30
+SCALE = 1.0
+
+# Text for game over
+GAME_OVER_TEXT = 48
+
+# For blinking
+BLINKING_INTERVAL = 0.1
+MAX_BLINKING_COUNT = 30

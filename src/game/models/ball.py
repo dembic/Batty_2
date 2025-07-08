@@ -1,5 +1,6 @@
 # src/game/models/ball.py
 from src.game.config import *
+from ..hud import LivesDisplay
 import math
 
 class Ball(arcade.Sprite):
@@ -58,12 +59,6 @@ class Ball(arcade.Sprite):
         if self.top >= SCREEN_HEIGHT:
             self.top = SCREEN_HEIGHT
             self.change_y *= -1
-
-        # Если мяч упал вниз
-        if self.bottom <= 0:
-            self.bottom = 0
-            """self.change_y *= -1"""
-            self.reset()
 
     # Проверка коллизий
     def check_collision(self, paddle):

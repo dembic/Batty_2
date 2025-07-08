@@ -1,3 +1,4 @@
+ # main.py
 from src.game.config import *
 from src.game import *
 

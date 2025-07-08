@@ -1,10 +1,11 @@
+# src/game/models/paddle.py
 from src.game.config import *
+from .blinking import Blinking
 
-class Paddle(arcade.Sprite):
+class Paddle(Blinking):
     """Class representing the paddle in the Batty game."""
     def __init__(self):
-        texture = arcade.load_texture("assets/images/paddle.png")
-        super().__init__(texture, scale=1.0)
+        super().__init__("assets/images/paddle.png", scale=1.0)
         self.center_x = SCREEN_WIDTH // 2 # Starting paddle position
         self.center_y = PADDLE_UP_Y
         self.change_x = 0 # speed
@@ -47,13 +48,21 @@ class Paddle(arcade.Sprite):
             self.right = SCREEN_WIDTH
             self.velocity_x = 0
 
+        # Обновляем эффект мигания если активен
+        if self.is_blinking:
+            super().update_blinking(delta_time)
+            if not self.is_blinking: # После завершения мигания
+                self.alpha = 255 # Visible
+
     def move_left(self):
         """Move the paddle left"""
-        self.moving_left = True
+        if not self.is_blinking: # Разрешаем движение только если не мигаем
+            self.moving_left = True
 
     def move_right(self):
         """Move the paddle right"""
-        self.moving_right = True
+        if not self.is_blinking:
+            self.moving_right = True
 
     def stop_left(self):
         """Stop the paddle movement"""
