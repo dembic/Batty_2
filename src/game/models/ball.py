@@ -12,11 +12,9 @@ class Ball(arcade.Sprite):
         self.change_x = 0
         self.change_y = 0
         self.previous_y = 0
-
         self.rotation_speed = 180 # Градусов в секунду
-
         self.is_attached = True
-
+        self.parent = None
         self.sound_bounce = arcade.load_sound(SOUND_BOUNCE)
 
     def attach_to_paddle(self, paddle):
@@ -70,6 +68,10 @@ class Ball(arcade.Sprite):
                 """self.change_y *= -1 """# No physics
                 arcade.play_sound(sound=self.sound_bounce, volume=SOUND_VOLUME)
                 self.bounce_from_paddle(paddle)
+
+        # Проверка столкновений с кирпичами через Level
+        if self.parent and hasattr(self.parent, 'level'):
+            self.parent.level.check_collision(self)
 
     def bounce_from_paddle(self, paddle):
         """Pysics-based bounce depending on were the ball hits the paddle"""

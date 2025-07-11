@@ -1,5 +1,5 @@
 from src.game.config import *
-from ..models import Paddle, Ball
+from ..models import Paddle, Ball, Level
 from ..hud import LivesDisplay
 
 # Placeholder classes with manager initialized in __init__
@@ -23,12 +23,16 @@ class GameView(arcade.View):
         self.lives_display = LivesDisplay(x=X, y=Y, spacing=SPACING, scale=SCALE)
         self.paddle = Paddle()
         self.ball = Ball()
+        self.ball.parent = self
+        self.level = Level(SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.level.generate_procedural() # Generate bricks
         self.ball.attach_to_paddle(self.paddle)
 
         # Создаем SpriteList для управления спрайтами
         self.sprite_list = arcade.SpriteList()
         self.sprite_list.append(self.paddle)
         self.sprite_list.append(self.ball)
+        self.sprite_list.extend(self.level.bricks)
 
     def on_show_view(self):
         arcade.set_background_color(arcade.color.BLACK)
@@ -37,13 +41,17 @@ class GameView(arcade.View):
     def on_draw(self):
         self.clear()
         self.game_view.draw()
-        self.sprite_list.draw()
+        self.sprite_list.draw() # Рисуем спрайты включая кирпичи
         self.lives_display.draw()
 
     def on_update(self, delta_time: float):
         self.paddle.update(delta_time)
         self.ball.update(delta_time, paddle=self.paddle)
         self.ball.check_collision(self.paddle)
+        self.level.update(delta_time)
+
+        # Проверка столкновения с кирпичами
+        self.level.check_collision(self.ball)
 
         if self.ball.is_attached:
             self.ball.attach_to_paddle(self.paddle)
@@ -55,7 +63,7 @@ class GameView(arcade.View):
             self.ball.reset()
             self.ball.attach_to_paddle(self.paddle)
 
-        # Обновление миганя для жизней и платформы
+        # Обновление мигания для жизней и платформы
         self.lives_display.update(delta_time)
 
         # Обработка конца игры
