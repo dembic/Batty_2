@@ -8,7 +8,7 @@ class Ball(arcade.Sprite):
 
     def __init__(self):
         texture = arcade.load_texture("assets/images/ball.png")
-        super().__init__(texture, scale=1.0)
+        super().__init__(texture, scale=1)
         self.change_x = 0
         self.change_y = 0
         self.previous_y = 0
@@ -87,6 +87,29 @@ class Ball(arcade.Sprite):
 
         # Устанавливаем чуть выше платформы чтобы не залипнуть
         self.center_y = paddle.top + self.height / 2 + 1
+
+    def bounce_off_brick(self, brick):
+        # Расстояния между центрами
+        dx = self.center_x - brick.center_x
+        dy = self.center_y - brick.center_y
+
+        overlap_x = (self.width + brick.width) / 2 - abs(dx)
+        overlap_y = (self.height + brick.height) / 2 - abs(dy)
+
+        if overlap_x < overlap_y:
+            # Горизонтальный отскок
+            if dx > 0:
+                self.left = brick.right
+            else:
+                self.right = brick.left
+            self.change_x *= -1
+        else:
+            # Вертикальный отскок
+            if dy > 0:
+                self.bottom = brick.top
+            else:
+                self.top = brick.bottom
+            self.change_y *= -1
 
     def reset(self):
         """Reset ball to initial position and speed"""

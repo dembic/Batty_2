@@ -34,7 +34,7 @@ class Paddle(Blinking):
                 self.velocity_x += self.friction * delta_time
                 if self.velocity_x > 0:
                     self.velocity_x = 0
-        # Ограничение мексимальной скорости
+        # Ограничение максимальной скорости
         self.velocity_x = max(-self.max_speed, min(self.velocity_x, self.max_speed))
 
         # Обновляем позицию

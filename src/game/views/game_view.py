@@ -37,6 +37,7 @@ class GameView(arcade.View):
     def on_show_view(self):
         arcade.set_background_color(arcade.color.BLACK)
         self.manager.enable()
+        self.ball.parent = self
 
     def on_draw(self):
         self.clear()
@@ -51,7 +52,11 @@ class GameView(arcade.View):
         self.level.update(delta_time)
 
         # Проверка столкновения с кирпичами
-        self.level.check_collision(self.ball)
+        for brick in self.level.bricks:
+            if arcade.check_for_collision(self.ball, brick):
+                self.ball.bounce_off_brick(brick)
+                brick.hit()
+                break
 
         if self.ball.is_attached:
             self.ball.attach_to_paddle(self.paddle)

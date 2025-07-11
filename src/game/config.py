@@ -41,4 +41,5 @@ MAX_BLINKING_COUNT = 30
 
 # for sounds
 SOUND_VOLUME = 0.5
-SOUND_BOUNCE = "assets/sounds/bounce.mp3"
+SOUND_BOUNCE = "assets/sounds/ball_bounce.mp3"
+SOUND_BALL_BRICK = "assets/sounds/ball_brick_bounce.mp3"

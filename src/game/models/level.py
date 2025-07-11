@@ -9,10 +9,7 @@ class Level:
         self.bricks = arcade.SpriteList()
         self.width = width
         self.height = height
-        if grid:
-            self.load_from_grid(grid)
-        else:
-            self.generate_procedural()
+        self.sound_ball_brick_bounce = arcade.load_sound(SOUND_BALL_BRICK)
 
     def load_from_grid(self, grid):
         brick_width = 54
@@ -28,14 +25,14 @@ class Level:
                     self.bricks.append(brick)
 
     def generate_procedural(self):
-        rows, cols = 5, 8
+        rows, cols = 8, 12
         brick_width = 54
         brick_height = 23
         for row in range(rows):
             for col in range(cols):
-                x = col * brick_width + brick_width // 2 + 190
+                x = col * brick_width + brick_width // 2 + 90
                 y = self.height - (row * brick_height + brick_height // 2 + 100)
-                health = random.randint(1, 2)
+                health = random.randint(1, 4)
                 points = health * 10
                 brick = Brick(x, y, health, points)
                 self.bricks.append(brick)
@@ -49,8 +46,8 @@ class Level:
     def check_collision(self, ball):
         hit_list = arcade.check_for_collision_with_list(ball, self.bricks)
         for brick in hit_list:
-            if not brick.is_destroyed:
-                ball.change_y *= -1
-                points = brick.hit()
-                # Добавить логику начисления очков
-                arcade.play_sound(arcade.load_sound("assets/sounds/bounce.mp3"), volume=SOUND_VOLUME)
+            ball.bounce_off_brick(brick)
+            points = brick.hit()
+            # Добавить логику начисления очков
+            arcade.play_sound(sound=self.sound_ball_brick_bounce, volume=SOUND_VOLUME)
+            break
