@@ -1,5 +1,6 @@
+# src/game/views/menu_view.py
+
 from src.game.config import *
-#from src.game import *
 from .game_view import GameView
 from .high_scores_view import HighScoresView
 from .settings_view import SettingsView

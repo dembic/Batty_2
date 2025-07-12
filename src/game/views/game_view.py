@@ -1,3 +1,7 @@
+from importlib.metadata import pass_none
+
+import arcade
+
 from src.game.config import *
 from ..models import Paddle, Ball, Level
 from ..hud import LivesDisplay, ScoreDisplay
@@ -7,7 +11,7 @@ class GameView(arcade.View):
     def __init__(self):
         super().__init__()
         self.manager = arcade.gui.UIManager()
-
+        self.sound_pause = arcade.load_sound(SOUND_PAUSE)
         # Text
         start_x = SCREEN_WIDTH // 2 - 60
         start_y = SCREEN_HEIGHT // 2
@@ -91,6 +95,13 @@ class GameView(arcade.View):
             from .menu_view import MenuView # Ленивый импорт
             menu_view = MenuView()
             self.window.show_view(menu_view)
+
+        # Game pause
+        if key == arcade.key.P:
+            from .pause_view import PauseView
+            pause = PauseView(self)
+            self.window.show_view(pause)
+            arcade.play_sound(sound=self.sound_pause)
 
     def on_key_release(self, key, modifiers):
         if key == arcade.key.LEFT:
