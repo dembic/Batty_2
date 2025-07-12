@@ -25,6 +25,9 @@ BALL_COLOR = (0, 255, 0)
 DEFAULT_FONT_SIZE = 20
 TITLE_FONT_SIZE = 48
 
+# for font score
+SCORE_FONT = 24
+
 # for lives
 MAX_LIVES = 3
 X = 20

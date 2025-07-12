@@ -25,14 +25,14 @@ class Level:
                     self.bricks.append(brick)
 
     def generate_procedural(self):
-        rows, cols = 8, 12
+        rows, cols = 3, 5
         brick_width = 54
         brick_height = 23
         for row in range(rows):
             for col in range(cols):
-                x = col * brick_width + brick_width // 2 + 90
+                x = col * brick_width + brick_width // 2 + 250
                 y = self.height - (row * brick_height + brick_height // 2 + 100)
-                health = random.randint(1, 4)
+                health = random.randint(1, 1)
                 points = health * 10
                 brick = Brick(x, y, health, points)
                 self.bricks.append(brick)
@@ -45,9 +45,10 @@ class Level:
 
     def check_collision(self, ball):
         hit_list = arcade.check_for_collision_with_list(ball, self.bricks)
+        total_points = 0
         for brick in hit_list:
             ball.bounce_off_brick(brick)
-            points = brick.hit()
-            # Добавить логику начисления очков
+            total_points += brick.hit()
             arcade.play_sound(sound=self.sound_ball_brick_bounce, volume=SOUND_VOLUME)
-            break
+            return total_points
+        return 0

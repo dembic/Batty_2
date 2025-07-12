@@ -1,6 +1,6 @@
 from src.game.config import *
 from ..models import Paddle, Ball, Level
-from ..hud import LivesDisplay
+from ..hud import LivesDisplay, ScoreDisplay
 
 # Placeholder classes with manager initialized in __init__
 class GameView(arcade.View):
@@ -20,6 +20,7 @@ class GameView(arcade.View):
         )
 
         # Game objects экземпляры классов
+        self.score_display = ScoreDisplay()
         self.lives_display = LivesDisplay(x=X, y=Y, spacing=SPACING, scale=SCALE)
         self.paddle = Paddle()
         self.ball = Ball()
@@ -44,19 +45,13 @@ class GameView(arcade.View):
         self.game_view.draw()
         self.sprite_list.draw() # Рисуем спрайты включая кирпичи
         self.lives_display.draw()
+        self.score_display.draw()
 
     def on_update(self, delta_time: float):
         self.paddle.update(delta_time)
         self.ball.update(delta_time, paddle=self.paddle)
         self.ball.check_collision(self.paddle)
-        self.level.update(delta_time)
-
-        # Проверка столкновения с кирпичами
-        for brick in self.level.bricks:
-            if arcade.check_for_collision(self.ball, brick):
-                self.ball.bounce_off_brick(brick)
-                brick.hit()
-                break
+        #self.level.update(delta_time)
 
         if self.ball.is_attached:
             self.ball.attach_to_paddle(self.paddle)
@@ -70,6 +65,11 @@ class GameView(arcade.View):
 
         # Обновление мигания для жизней и платформы
         self.lives_display.update(delta_time)
+
+        # Обновление и добавление очков
+        points = self.level.check_collision(self.ball)
+        if points > 0:
+            self.score_display.add(points)
 
         # Обработка конца игры
         if self.lives_display.current_lives == 0:

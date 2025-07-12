@@ -41,23 +41,12 @@ class Ball(arcade.Sprite):
         self.previous_y = self.center_y
         self.center_x += self.change_x * delta_time
         self.center_y += self.change_y * delta_time
+        self.angle = (self.angle + self.rotation_speed * delta_time) % 360
 
-        # Врашение мяча
-        self.angle += self.rotation_speed * delta_time
-        self.angle %= 360
-
-        # Отражение от левой/правой стены
-        if self.left <= 0:
-            self.left = 0
+        # Стенки
+        if self.left <= 0 or self.right >= SCREEN_WIDTH:
             self.change_x *= -1
-
-        if self.right >= SCREEN_WIDTH:
-            self.right = SCREEN_WIDTH
-            self.change_x *= -1
-
-        # Отражение от верхней границы
         if self.top >= SCREEN_HEIGHT:
-            self.top = SCREEN_HEIGHT
             self.change_y *= -1
 
     # Проверка коллизий
@@ -68,10 +57,6 @@ class Ball(arcade.Sprite):
                 """self.change_y *= -1 """# No physics
                 arcade.play_sound(sound=self.sound_bounce, volume=SOUND_VOLUME)
                 self.bounce_from_paddle(paddle)
-
-        # Проверка столкновений с кирпичами через Level
-        if self.parent and hasattr(self.parent, 'level'):
-            self.parent.level.check_collision(self)
 
     def bounce_from_paddle(self, paddle):
         """Pysics-based bounce depending on were the ball hits the paddle"""

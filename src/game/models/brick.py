@@ -26,7 +26,7 @@ class Brick(arcade.Sprite):
         self.cur_texture_index = random.randint(7,14)
         self.texture = self.textures[self.cur_texture_index]
 
-        print(f"Loaded {len(self.textures)} textures, Brick at ({x}, {y}) with health {self.health}")
+        #print(f"Loaded {len(self.textures)} textures, Brick at ({x}, {y}) with health {self.health}")
 
         self.width = 54 * scale
         self.height = 22 * scale
@@ -34,12 +34,10 @@ class Brick(arcade.Sprite):
     def hit(self):
         if not self.is_destroyed and self.health > 0:
             self.health -= 1
-            print(f"Hit brick at ({self.center_x}, {self.center_y}) with health {self.health}, Index: {self.cur_texture_index}")
             if self.health > 0:
                 self.cur_texture_index = int(((self.health -1) / self.max_health) * (len(self.textures) -1))
                 self.texture = self.textures[self.cur_texture_index]
-            else:
-                #self.health <= 0:
+            elif self.health <= 0:
                 self.is_destroyed = True
                 self.remove_from_sprite_lists()
                 return self.points
