@@ -50,4 +50,3 @@ class LivesDisplay:
             if sprite.is_blinking:
                 sprite.update_blinking(delta_time)
 
-

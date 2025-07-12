@@ -1,6 +1,3 @@
-from importlib.metadata import pass_none
-
-import arcade
 
 from src.game.config import *
 from ..models import Paddle, Ball, Level
