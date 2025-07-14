@@ -1,0 +1,32 @@
+[
+    {
+        "x": 311.0,
+        "y": 349.0,
+        "color": "orange",
+        "health": 2
+    },
+    {
+        "x": 482.0,
+        "y": 323.0,
+        "color": "orange",
+        "health": 2
+    },
+    {
+        "x": 539.0,
+        "y": 349.0,
+        "color": "orange",
+        "health": 2
+    },
+    {
+        "x": 482.0,
+        "y": 453.0,
+        "color": "orange",
+        "health": 2
+    },
+    {
+        "x": 368.0,
+        "y": 427.0,
+        "color": "orange",
+        "health": 2
+    }
+]

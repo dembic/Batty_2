@@ -1,8 +1,11 @@
 # assets/level_editor/editor.py
+# assets/level_editor/editor.py
+
 import glob
 import json
 import os
 
+import arcade.gui
 
 from src.game.config import *
 from grid_overlay import GridOverlay
@@ -45,114 +48,119 @@ class Brick:
         else:
             return 2
 
+
 class LevelEditor(arcade.Window):
     def __init__(self):
-        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, "Batty Level editor")
+        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, "Batty Level Editor")
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
-        self.v_box = None
+        self.grid = GridOverlay(SCREEN_WIDTH, SCREEN_HEIGHT, BRICK_WIDTH, BRICK_HEIGHT, GRID_MARGIN)
+
         self.bricks = []
         self.current_color_index = 0
-        self.grid_offset_y = 100
-        self.pending_save_path = None
-        self.awaiting_overwrite_confirm = False
         self.loaded_level_path = None
+        self.awaiting_overwrite_confirm = False
+        self.pending_save_path = None
         self.show_grid = True
-        self.grid = GridOverlay(SCREEN_WIDTH, SCREEN_HEIGHT, BRICK_WIDTH, BRICK_HEIGHT, GRID_MARGIN, self.grid_offset_y)
 
-    def show_level_selector_gui(self):
-        self.manager.clear()
-        self.v_box = arcade.gui.UIBoxLayout()
-
-        # Заголовок
-        self.v_box.add(arcade.gui.UITextArea(text="Select Level to Load", font_size=18, height=40))
-
-        # Получение списка уровней
-        files = sorted(glob.glob(os.path.join(LEVELS_DIR, "level*.json")))
-        for path in files:
-            filename_level = os.path.basename(path)
-
-            button = arcade.gui.UIFlatButton(text=filename_level, width=200)
-            @button.event("on_click")
-            def on_click(event, path=path):
-                self.load_level_from_file(path)
-                self.manager.clear() # Удаляем меню после выбора
-
-            self.v_box.add(button)
-
-        # Отмена
-        cancel_btn = arcade.gui.UIFlatButton(text="Cancel", width=200)
-        @cancel_btn.event("on_click")
-        def on_click_cancel(event):
-            self.manager.clear()
-
-        self.v_box.add(cancel_btn)
-        self.manager.add(arcade.gui.UIAnchorLayout(children=self.v_box, anchor_x="center_x", anchor_y="center_y"))
+        self.level_list_open = False
+        self.level_files = []
+        self.scroll_offset = 0
+        self.entry_height = 30
 
     def on_draw(self):
         self.clear(arcade.color.ASH_GREY)
+
         for brick in self.bricks:
             brick.draw()
-
-        if self.pending_save_path:
-            arcade.Text(
-                f"Will save to: {self.pending_save_path}",
-                10,
-                40,
-                arcade.color.DARK_RED if self.awaiting_overwrite_confirm else arcade.color.DARK_GREEN,
-                12
-            ).draw()
-        if self.awaiting_overwrite_confirm:
-            arcade.Text(
-                f"File exists! Press Y to overwrite or N to cancel.",
-                10,
-                60,
-                arcade.color.RED,
-                12
-            ).draw()
-
-        # Подсказка
-        arcade.Text(
-            f"Current color: {COLOR_LIST[self.current_color_index]}",
-            10,
-            SCREEN_HEIGHT - 30,
-            arcade.color.BLACK,
-            14
-        ).draw()
-
-        arcade.Text(
-            f"1-7: Сolor | S: = Save | C: = Clear | G: = Grid | Left Click: Add | Right Click: Remove",
-            10,
-            10,
-            arcade.color.DARK_BLUE_GRAY,
-            12
-        ).draw()
 
         if self.show_grid:
             self.grid.draw()
 
+        # Показываем редактируемый файл
+        if self.loaded_level_path:
+            filename = os.path.basename(self.loaded_level_path)
+            arcade.Text(
+                f"Editing: {filename}",
+                10,
+                self.height - 50,
+                arcade.color.DARK_GREEN,
+                14
+            ).draw()
+
+        arcade.Text(
+            f"1–7: Color | L: Load | S: Save | C: Clear | G: Toggle Grid | Left Click = Add | Right Click = Remove",
+            10, 10, arcade.color.BLACK, 12).draw()
+
+        arcade.Text(
+            f"Current color: {COLOR_LIST[self.current_color_index]}",
+            10, SCREEN_HEIGHT - 30, arcade.color.BLACK, 14).draw()
+
+        if self.awaiting_overwrite_confirm:
+            arcade.Text("File exists! Press Y to overwrite or N to cancel.", 10, 50, arcade.color.RED, 14).draw()
+
+        if self.level_list_open:
+            self.draw_level_list()
+
+        self.manager.draw()
+
+    def draw_level_list(self):
+        x = SCREEN_WIDTH // 2 + 280
+        y = SCREEN_HEIGHT - 80
+        width = 300
+        height = SCREEN_HEIGHT - 70
+
+        arcade.draw_lbwh_rectangle_filled(SCREEN_WIDTH // 2 + 270, SCREEN_HEIGHT // 2 - 260, width, height, arcade.color.GRAY)
+        arcade.Text("Select level", x + 10, y + 50, arcade.color.BLACK, 16, bold=True).draw()
+
+        start_y = y - 40 + self.scroll_offset
+        for i, file_path in enumerate(self.level_files):
+            filename = os.path.basename(file_path)
+            entry_y = start_y - i * self.entry_height
+            if 50 < entry_y < SCREEN_HEIGHT - 30:
+                arcade.Text(filename, x + 20, entry_y, arcade.color.WHITE, 14).draw()
+
     def on_mouse_press(self, x, y, button, modifiers):
+        if self.level_list_open:
+            list_x = SCREEN_WIDTH // 2 + 290
+            list_y = SCREEN_HEIGHT - 80
+            start_y = list_y - 40 + self.scroll_offset
+
+            for i, file_path in enumerate(self.level_files):
+                entry_y = start_y - i * self.entry_height
+                if (list_x + 20 < x < list_x + 280) and (entry_y < y < entry_y + self.entry_height):
+                    self.load_level_from_file(file_path)
+                    self.level_list_open = False
+                    return
+            return
+
         grid_x = (x // (BRICK_WIDTH + GRID_MARGIN)) * (BRICK_WIDTH + GRID_MARGIN) + BRICK_WIDTH // 2
         grid_y = (y // (BRICK_HEIGHT + GRID_MARGIN)) * (BRICK_HEIGHT + GRID_MARGIN) + BRICK_HEIGHT // 2
 
-        if grid_y < self.grid_offset_y:
+        if grid_y < 100:
             return
-        # Удаление кирпича по правому клику
+
         if button == arcade.MOUSE_BUTTON_RIGHT:
             for brick in self.bricks:
                 if abs(brick.x - grid_x) < BRICK_WIDTH // 2 and abs(brick.y - grid_y) < BRICK_HEIGHT // 2:
                     self.bricks.remove(brick)
                     return
 
-        # Добавление кирпича по левому клику
         if button == arcade.MOUSE_BUTTON_LEFT:
             for brick in self.bricks:
                 if abs(brick.x - grid_x) < 2 and abs(brick.y - grid_y) < 2:
-                    return # Уже есть - не добавляем
-
-
+                    return
             color = COLOR_LIST[self.current_color_index]
             self.bricks.append(Brick(grid_x, grid_y, color))
+
+    def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
+        if self.level_list_open:
+            visible_height = SCREEN_HEIGHT - 120
+            full_height = len(self.level_files) * self.entry_height
+            max_scroll = max(0, full_height - visible_height + self.entry_height)
+            self.scroll_offset -= scroll_y * 15
+            self.scroll_offset = max(0, min(self.scroll_offset, max_scroll))
+
 
     def on_key_press(self, key, modifiers):
         if self.awaiting_overwrite_confirm:
@@ -161,7 +169,6 @@ class LevelEditor(arcade.Window):
                 self.awaiting_overwrite_confirm = False
                 self.pending_save_path = None
             elif key == arcade.key.N:
-                print("Save canceled")
                 self.awaiting_overwrite_confirm = False
                 self.pending_save_path = None
             return
@@ -172,71 +179,33 @@ class LevelEditor(arcade.Window):
             self.save_json_to_file()
         elif key == arcade.key.C:
             self.bricks.clear()
-        elif key == arcade.key.L:
-            self.show_level_selector_gui()
         elif key == arcade.key.G:
             self.show_grid = not self.show_grid
+        elif key == arcade.key.L:
+            self.level_files = sorted(glob.glob(os.path.join(LEVELS_DIR, "level*.json")))
+            self.level_list_open = True
+            self.scroll_offset = 0
 
     def load_level_from_file(self, path):
         with open(path, "r") as f:
             data = json.load(f)
-
-            self.bricks.clear()
-            for bricks_data in data:
-                self.bricks.append(Brick(bricks_data["x"], bricks_data["y"], bricks_data["color"]))
-
-            self.loaded_level_path = path
-            print(f"Loaded level from {path}")
-
-    def load_level_by_index(self, index):
-        filename_level = f"level{index:02}.json"
-        path = os.path.join(LEVELS_DIR, filename_level)
-
-        if not os.path.exists(path):
-            print(f"File {filename_level} not found in {LEVELS_DIR}")
-            return
-        with open(path, "r") as f:
-            data = json.load(f)
-
-        self.bricks.clear()
-        for brick_data in data:
-            brick = Brick(brick_data["x"], brick_data["y"], brick_data["color"])
-            self.bricks.append(brick)
-
+        self.bricks = [Brick(b["x"], b["y"], b["color"]) for b in data]
         self.loaded_level_path = path
-        print(f"Loaded level from {path}")
-
-    def prepare_save_to_json(self):
-        levels_dir = LEVELS_DIR
-        os.makedirs(levels_dir, exist_ok=True)
-
-        index = 1
-        while True:
-            filename_level = f"level{index:02}.json"
-            full_path = os.path.join(levels_dir, filename_level)
-            if not os.path.exists(full_path):
-                break
-            index += 1
-
-        # Проверка: если последний файл существует - предложить перезаписать
-        full_path = os.path.join(levels_dir, f"level{index - 1:02}.json") if index > 1 else full_path
-
-        if os.path.exists(full_path):
-            print(f"File {full_path} exists. Press Y to overwrite or N to cancel.")
-            self.awaiting_overwrite_confirm = True
-            self.pending_save_path = full_path
-        else:
-            self.save_json_to_file(full_path)
+        print(f"Loaded {path}")
 
     def save_json_to_file(self, path=None):
-        data =[brick.to_dict() for brick in self.bricks]
         if not path:
             path = self.loaded_level_path or self.get_next_available_path()
-            self.loaded_level_path = path
+            if os.path.exists(path):
+                self.awaiting_overwrite_confirm = True
+                self.pending_save_path = path
+                return
 
+        data = [b.to_dict() for b in self.bricks]
         with open(path, "w") as f:
             json.dump(data, f, indent=4)
-        print(f"Save {len(data)} bricks to {path}")
+        print(f"Saved to {path}")
+        self.loaded_level_path = path
 
     @staticmethod
     def get_next_available_path():
@@ -247,8 +216,6 @@ class LevelEditor(arcade.Window):
             if not os.path.exists(path):
                 return path
             index += 1
-
-
 
 
 if __name__ == "__main__":

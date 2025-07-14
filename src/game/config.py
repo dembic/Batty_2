@@ -52,7 +52,7 @@ SOUND_PAUSE = "assets/sounds/pause.mp3"
 BRICK_WIDTH = 53
 BRICK_HEIGHT = 22
 GRID_MARGIN = 4
-LEVEL_PATH = "assets/level_editor/levels/level06.json"
+LEVEL_PATH = "assets/level_editor/levels/level08.json"
 LEVELS_DIR = "levels"
 
 # for colors to brick at editor
