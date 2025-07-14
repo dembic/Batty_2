@@ -1,5 +1,4 @@
 # assets/level_editor/editor.py
-# assets/level_editor/editor.py
 
 import glob
 import json
