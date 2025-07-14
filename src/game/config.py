@@ -47,3 +47,23 @@ SOUND_VOLUME = 0.5
 SOUND_BOUNCE = "assets/sounds/ball_bounce.mp3"
 SOUND_BALL_BRICK = "assets/sounds/ball_brick_bounce.mp3"
 SOUND_PAUSE = "assets/sounds/pause.mp3"
+
+# for brick
+BRICK_WIDTH = 53
+BRICK_HEIGHT = 22
+GRID_MARGIN = 4
+LEVEL_PATH = "assets/level_editor/levels/level06.json"
+LEVELS_DIR = "levels"
+
+# for colors to brick at editor
+COLOR_PALETTE = {
+    "red":    arcade.color.RED,
+    "orange": arcade.color.ORANGE,
+    "yellow": arcade.color.YELLOW,
+    "green":  arcade.color.GREEN,
+    "blue":   arcade.color.BLUE,
+    "purple": arcade.color.PURPLE,
+    "pink":   arcade.color.PINK
+}
+
+COLOR_LIST = list(COLOR_PALETTE.keys())

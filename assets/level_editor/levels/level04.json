@@ -1,0 +1,26 @@
+[
+    {
+        "x": 375,
+        "y": 401,
+        "color": "red",
+        "health": 5
+    },
+    {
+        "x": 491,
+        "y": 349,
+        "color": "red",
+        "health": 5
+    },
+    {
+        "x": 317,
+        "y": 245,
+        "color": "red",
+        "health": 5
+    },
+    {
+        "x": 201,
+        "y": 401,
+        "color": "red",
+        "health": 5
+    }
+]

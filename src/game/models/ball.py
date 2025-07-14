@@ -31,12 +31,13 @@ class Ball(arcade.Sprite):
 
     def update(self, delta_time: float = 1 / 60, *args, **kwargs) -> None:
         """Update ball position and handle screen boundaries"""
-        if self.is_attached:
+        if self.is_attached and self.parent and hasattr(self.parent, "paddle"):
             # Мяч следует за платформой
-            paddle = kwargs.get("paddle")
-            if paddle:
-                self.attach_to_paddle(paddle)
+            paddle = self.parent.paddle
+            self.center_x = paddle.center_x
+            self.center_y = paddle.top + self.height / 2
             return
+
 
         self.previous_y = self.center_y
         self.center_x += self.change_x * delta_time

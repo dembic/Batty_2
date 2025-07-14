@@ -1,6 +1,6 @@
 # src/game/models/level.py
+import json
 
-import random
 from src.game.config import *
 from .brick import Brick
 
@@ -10,6 +10,20 @@ class Level:
         self.width = width
         self.height = height
         self.sound_ball_brick_bounce = arcade.load_sound(SOUND_BALL_BRICK)
+
+    def load_from_json(self, path):
+        with open(path, "r") as f:
+            data = json.load(f)
+
+        for entry in data:
+            x = entry.get("x")
+            y = entry.get("y")
+            color = entry.get("color")
+            health = entry.get("health", 1)
+            points = health * 10
+
+            brick = Brick(x, y, health=health, points=points, color=color)
+            self.bricks.append(brick)
 
     def load_from_grid(self, grid):
         brick_width = 54
@@ -25,16 +39,18 @@ class Level:
                     self.bricks.append(brick)
 
     def generate_procedural(self):
-        rows, cols = 3, 5
+        colors = ["blue", "green", "orange", "pink", "purple", "red", "yellow"]
+        rows = 6
+        cols = len(colors)
         brick_width = 54
         brick_height = 23
+
         for row in range(rows):
             for col in range(cols):
-                x = col * brick_width + brick_width // 2 + 250
+                color = colors[col % len(colors)]
+                x = col * brick_width + brick_width // 2 + 180
                 y = self.height - (row * brick_height + brick_height // 2 + 100)
-                health = random.randint(1, 1)
-                points = health * 10
-                brick = Brick(x, y, health, points)
+                brick = Brick(x, y, color=color)
                 self.bricks.append(brick)
 
     def update(self, delta_time):

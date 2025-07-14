@@ -1,9 +1,8 @@
-
+# src/game/views/game_view.py
 from src.game.config import *
 from ..models import Paddle, Ball, Level
 from ..hud import LivesDisplay, ScoreDisplay
 
-# Placeholder classes with manager initialized in __init__
 class GameView(arcade.View):
     def __init__(self):
         super().__init__()
@@ -27,7 +26,8 @@ class GameView(arcade.View):
         self.ball = Ball()
         self.ball.parent = self
         self.level = Level(SCREEN_WIDTH, SCREEN_HEIGHT)
-        self.level.generate_procedural() # Generate bricks
+        #self.level.generate_procedural() # Generate bricks
+        self.level.load_from_json(LEVEL_PATH)
         self.ball.attach_to_paddle(self.paddle)
 
         # Создаем SpriteList для управления спрайтами
@@ -43,26 +43,21 @@ class GameView(arcade.View):
 
     def on_draw(self):
         self.clear()
-        self.game_view.draw()
+        #self.game_view.draw()
         self.sprite_list.draw() # Рисуем спрайты включая кирпичи
         self.lives_display.draw()
         self.score_display.draw()
 
     def on_update(self, delta_time: float):
         self.paddle.update(delta_time)
-        self.ball.update(delta_time, paddle=self.paddle)
+        self.ball.update(delta_time)
         self.ball.check_collision(self.paddle)
-        #self.level.update(delta_time)
-
-        if self.ball.is_attached:
-            self.ball.attach_to_paddle(self.paddle)
 
         # Обработка потери жизни если мяч упал
         if self.ball.bottom <= 0:
             self.lives_display.lose_life()
             self.paddle.start_blinking(use_scale=False)
             self.ball.reset()
-            self.ball.attach_to_paddle(self.paddle)
 
         # Обновление мигания для жизней и платформы
         self.lives_display.update(delta_time)
@@ -79,7 +74,7 @@ class GameView(arcade.View):
             self.window.show_view(game_over_view)
 
     def on_key_press(self, key, modifiers):
-        """Handle keyboard input to return menu."""
+        """Handle keyboard input to return a menu."""
         if key == arcade.key.LEFT:
             self.paddle.move_left()
         elif key == arcade.key.RIGHT:
@@ -87,7 +82,7 @@ class GameView(arcade.View):
         elif key == arcade.key.SPACE and self.ball.is_attached:
             self.ball.launch()
 
-        # return main menu
+        # return the main menu
         if key == arcade.key.ESCAPE:
             from .menu_view import MenuView # Ленивый импорт
             menu_view = MenuView()
