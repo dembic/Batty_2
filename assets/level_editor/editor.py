@@ -88,7 +88,7 @@ class LevelEditor(arcade.Window):
             ).draw()
 
         arcade.Text(
-            f"1–7: Color | L: Load | S: Save | C: Clear | G: Toggle Grid | Left Click = Add | Right Click = Remove",
+            f"1–8: Color | L: Load | S: Save | C: Clear | G: Toggle Grid | Left Click = Add | Right Click = Remove",
             10, 10, arcade.color.BLACK, 12).draw()
 
         arcade.Text(
@@ -172,7 +172,7 @@ class LevelEditor(arcade.Window):
                 self.pending_save_path = None
             return
 
-        if arcade.key.KEY_1 <= key <= arcade.key.KEY_7:
+        if arcade.key.KEY_1 <= key <= arcade.key.KEY_8:
             self.current_color_index = key - arcade.key.KEY_1
         elif key == arcade.key.S:
             self.save_json_to_file()

@@ -21,24 +21,40 @@ class Brick(arcade.Sprite):
 
         if color is None:
             color = random.choice(list(COLOR_TO_COLUMN.keys()))
-        self.brick_color = color
-        self.color_column = COLOR_TO_COLUMN[color]
 
-        self.health = health if health is not None else COLOR_TO_HEALTH[color]
-        self.max_health = self.health
-        self.points = points
+        self.brick_color = color
+        self.color_column = COLOR_TO_COLUMN.get(color, 0)
+
+        self.is_indestructible = (color == "gray")
+
+        if self.is_indestructible:
+            self.health = None
+            self.max_health = None
+            self.points = 0
+        else:
+            self.health = health if health is not None else COLOR_TO_HEALTH[color]
+            self.max_health = self.health
+            self.points = points
+
         self.is_destroyed = False
 
         # Назначаем первая текстура здоровая
         self.update_texture()
 
     def update_texture(self):
-                
-        row = 5 - (self.health - 1)
+        if self.is_indestructible:
+            row = 0
+        else:
+            row = 5 - (self.health - 1)
+            row = max(1, min(row, 5))
+
         index = self.color_column + row * 7
         self.texture = self.textures[index]
 
     def hit(self):
+        if self.is_indestructible:
+            return 0
+
         if not self.is_destroyed and self.health > 0:
             self.health -= 1
             if self.health > 0:

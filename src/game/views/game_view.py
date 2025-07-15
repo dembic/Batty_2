@@ -1,6 +1,5 @@
 # src/game/views/game_view.py
 import os.path
-from operator import index
 
 from src.game.config import *
 from ..models import Paddle, Ball, Level
@@ -27,8 +26,6 @@ class GameView(arcade.View):
             arcade.color.FRENCH_WINE,
             36, bold=True
         )
-
-
 
         # Game objects экземпляры классов
         self.score_display = ScoreDisplay()
@@ -60,6 +57,9 @@ class GameView(arcade.View):
             self.sprite_list.append(self.paddle)
             self.sprite_list.append(self.ball)
             self.sprite_list.extend(self.level.bricks)
+
+            # Прекрепить мяч
+            self.ball.reset()
             self.ball.attach_to_paddle(self.paddle)
 
             print(f"Loaded {file_level}")
@@ -128,8 +128,11 @@ class GameView(arcade.View):
         if points > 0:
             self.score_display.add(points)
 
-        # Условия для таймера
-        if len(self.level.bricks) == 0 and self.level_complete_text_timer <= 0:
+        # Условия для показа надписи при завершении уровня
+        if self.level_complete_text_timer <= 0 and all(
+            getattr(brick, "is_indestructible", False) or brick.is_destroyed
+            for brick in self.level.bricks
+        ):
             self.level_complete_text_timer = 2.0
 
         # Таймер показа Level Complete
@@ -146,7 +149,6 @@ class GameView(arcade.View):
             self.window.show_view(game_over_view)
 
     def on_key_press(self, key, modifiers):
-        """Handle keyboard input to return a menu."""
         if key == arcade.key.LEFT:
             self.paddle.move_left()
         elif key == arcade.key.RIGHT:

@@ -64,7 +64,8 @@ COLOR_PALETTE = {
     "green":  arcade.color.GREEN,
     "blue":   arcade.color.BLUE,
     "purple": arcade.color.PURPLE,
-    "pink":   arcade.color.PINK
+    "pink":   arcade.color.PINK,
+    "gray":   arcade.color.GRAY
 }
 
 COLOR_LIST = list(COLOR_PALETTE.keys())
@@ -77,7 +78,8 @@ COLOR_TO_COLUMN = {
     "pink": 3,
     "purple": 4,
     "red": 5,
-    "yellow": 6
+    "yellow": 6,
+    "gray": 0
 }
 
 COLOR_TO_HEALTH = {
