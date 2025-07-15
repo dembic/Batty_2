@@ -45,9 +45,15 @@ class Ball(arcade.Sprite):
         self.angle = (self.angle + self.rotation_speed * delta_time) % 360
 
         # Стенки
-        if self.left <= 0 or self.right >= SCREEN_WIDTH:
+        if self.left <=0:
+            self.left = 0
             self.change_x *= -1
+        elif self.right >= SCREEN_WIDTH:
+            self.right = SCREEN_WIDTH
+            self.change_x *= -1
+
         if self.top >= SCREEN_HEIGHT:
+            self.top = SCREEN_HEIGHT
             self.change_y *= -1
 
     # Проверка коллизий
@@ -85,16 +91,16 @@ class Ball(arcade.Sprite):
         if overlap_x < overlap_y:
             # Горизонтальный отскок
             if dx > 0:
-                self.left = brick.right
+                self.left = brick.right + 1
             else:
-                self.right = brick.left
+                self.right = brick.left - 1
             self.change_x *= -1
         else:
             # Вертикальный отскок
             if dy > 0:
-                self.bottom = brick.top
+                self.bottom = brick.top + 1
             else:
-                self.top = brick.bottom
+                self.top = brick.bottom - 1
             self.change_y *= -1
 
     def reset(self):

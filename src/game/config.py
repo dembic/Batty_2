@@ -1,4 +1,4 @@
-import arcade
+# src/game/config.py
 import arcade.gui
 
 # Screen
@@ -17,8 +17,9 @@ PADDLE_COLOR = (0, 0, 255)
 BALL_WIDTH = 30
 BALL_HEIGHT = 30
 BALL_NORMAL_SPEED = -200
-BALL_FAST_SPEED = 300
-BALL_SLOW_SPEED = 100
+BALL_FAST_SPEED = -300
+BALL_SLOW_SPEED = -100
+BALL_MIN_SPEED = -80
 BALL_COLOR = (0, 255, 0)
 
 # for fonts
@@ -67,3 +68,24 @@ COLOR_PALETTE = {
 }
 
 COLOR_LIST = list(COLOR_PALETTE.keys())
+
+# for brick
+COLOR_TO_COLUMN = {
+    "blue": 0,
+    "green": 1,
+    "orange": 2,
+    "pink": 3,
+    "purple": 4,
+    "red": 5,
+    "yellow": 6
+}
+
+COLOR_TO_HEALTH = {
+    "red": 5,
+    "purple": 4,
+    "orange": 3,
+    "pink": 3,
+    "yellow": 2,
+    "blue": 1,
+    "green": 1
+}

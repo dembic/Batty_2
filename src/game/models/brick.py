@@ -3,26 +3,6 @@ import random
 
 from src.game.config import *
 
-COLOR_TO_COLUMN = {
-    "blue": 0,
-    "green": 1,
-    "orange": 2,
-    "pink": 3,
-    "purple": 4,
-    "red": 5,
-    "yellow": 6
-}
-
-COLOR_TO_HEALTH = {
-    "red": 5,
-    "purple": 4,
-    "orange": 3,
-    "pink": 3,
-    "yellow": 2,
-    "blue": 1,
-    "green": 1
-}
-
 class Brick(arcade.Sprite):
     def __init__(self, x, y, health=None, points=10, color=None, scale=SCALE):
         super().__init__()
@@ -49,15 +29,11 @@ class Brick(arcade.Sprite):
         self.points = points
         self.is_destroyed = False
 
-
-
         # Назначаем первая текстура здоровая
         self.update_texture()
 
-        #self.width = 54 * scale
-        #self.height = 22 * scale
-
     def update_texture(self):
+                
         row = 5 - (self.health - 1)
         index = self.color_column + row * 7
         self.texture = self.textures[index]
