@@ -104,13 +104,13 @@ class LevelEditor(arcade.Window):
         self.manager.draw()
 
     def draw_level_list(self):
-        x = SCREEN_WIDTH // 2 + 280
+        x = SCREEN_WIDTH // 2 + 270
         y = SCREEN_HEIGHT - 80
         width = 300
         height = SCREEN_HEIGHT - 70
 
         arcade.draw_lbwh_rectangle_filled(SCREEN_WIDTH // 2 + 270, SCREEN_HEIGHT // 2 - 260, width, height, arcade.color.GRAY)
-        arcade.Text("Select level", x + 10, y + 50, arcade.color.BLACK, 16, bold=True).draw()
+        arcade.Text("Select level", x + 5, y + 50, arcade.color.BLACK, 16, bold=True).draw()
 
         start_y = y - 40 + self.scroll_offset
         for i, file_path in enumerate(self.level_files):
@@ -121,7 +121,7 @@ class LevelEditor(arcade.Window):
 
     def on_mouse_press(self, x, y, button, modifiers):
         if self.level_list_open:
-            list_x = SCREEN_WIDTH // 2 + 290
+            list_x = SCREEN_WIDTH // 2 + 280
             list_y = SCREEN_HEIGHT - 80
             start_y = list_y - 40 + self.scroll_offset
 
