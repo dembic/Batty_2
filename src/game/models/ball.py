@@ -16,27 +16,20 @@ class Ball(arcade.Sprite):
         self.parent = None
         self.sound_bounce = arcade.load_sound(SOUND_BOUNCE)
 
-    def clone(self):
+    def clone(self, angle_offset_degrees=0):
         clone = Ball()
         clone.center_x = self.center_x
         clone.center_y = self.center_y
         clone.parent = self.parent
         clone.is_attached = False
 
-        # Проверка скорости клонируемого мяча
         speed = math.hypot(self.change_x, self.change_y)
-        if speed < 10:
-            # Если оригинальный мяч почти не двигался — задаём случайное направление
-            angle_deg = random.uniform(30, 150)
-            angle_rad = math.radians(angle_deg)
-            speed = 200
-            clone.change_x = speed * math.cos(angle_rad)
-            clone.change_y = speed * math.sin(angle_rad)
-        else:
-            # Отзеркалить вертикальную скорость, чтобы шары разлетались
-            clone.change_x = self.change_x
-            clone.change_y = -self.change_y
-        print(f"Cloned ball with dx={clone.change_x:.1f}, dy={clone.change_y:.1f}")
+        current_angle = math.atan2(self.change_y, self.change_x)
+        new_angle = current_angle + math.radians(angle_offset_degrees)
+
+        clone.change_x = speed * math.cos(new_angle)
+        clone.change_y = speed * math.sin(new_angle)
+
         return clone
 
     def attach_to_paddle(self, paddle):
