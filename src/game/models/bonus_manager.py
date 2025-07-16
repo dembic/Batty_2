@@ -12,7 +12,7 @@ class BonusManager:
         self.bonuses = SpriteList()
 
     def maybe_drop_bonus(self, x, y):
-        if random.random() < 0.8: # 20% Шанс
+        if random.random() < 0.2: # 20% Шанс
             self.bonuses.append(BonusMultiBall(x, y))
 
     def update(self, delta_time, game_view):
