@@ -56,6 +56,10 @@ GRID_MARGIN = 4
 LEVEL_PATH = "assets/level_editor/levels/level08.json"
 LEVELS_DIR = "levels"
 
+# for bonus multi ball
+BONUS_SIZE = 32
+BONUS_SPEED = -100
+
 # for colors to brick at editor
 COLOR_PALETTE = {
     "red":    arcade.color.RED,

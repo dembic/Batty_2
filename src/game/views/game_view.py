@@ -4,6 +4,8 @@ import os.path
 from src.game.config import *
 from ..models import Paddle, Ball, Level
 from ..hud import LivesDisplay, ScoreDisplay
+from ..models.bonus_manager import BonusManager
+
 
 class GameView(arcade.View):
     def __init__(self):
@@ -12,42 +14,45 @@ class GameView(arcade.View):
         self.sound_pause = arcade.load_sound(SOUND_PAUSE)
         self.level_index = 1
         self.level_complete_text_timer = 0
-        self.level_complete_text = None
         self.show_level_text_timer = 2
         self.level_text = None
 
-        # Текс для завершения уровня
-        start_x = SCREEN_WIDTH // 2 - 170
-        start_y = SCREEN_HEIGHT // 2
+        self.bonus_manager = BonusManager()
+        self.extra_balls = arcade.SpriteList()  # для дополнительных мячей
+
+        # Текст завершения уровня
         self.level_complete_view = arcade.Text(
             "Level complete",
-            start_x,
-            start_y,
+            SCREEN_WIDTH // 2 - 170,
+            SCREEN_HEIGHT // 2,
             arcade.color.FRENCH_WINE,
-            36, bold=True
+            36,
+            bold=True
         )
 
-        # Game objects экземпляры классов
         self.score_display = ScoreDisplay()
         self.lives_display = LivesDisplay(x=X, y=Y, spacing=SPACING, scale=SCALE)
+
         self.paddle = Paddle()
         self.ball = Ball()
         self.ball.parent = self
-        self.level = Level(SCREEN_WIDTH, SCREEN_HEIGHT)
-        #self.level.generate_procedural() # Generate bricks
-        #self.level.load_from_json(LEVEL_PATH)
-        self.load_level(self.level_index)
-        self.ball.attach_to_paddle(self.paddle)
 
-        # Создаем SpriteList для управления спрайтами
+        self.level = Level(SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.load_level(self.level_index)
+
         self.sprite_list = arcade.SpriteList()
         self.sprite_list.append(self.paddle)
         self.sprite_list.append(self.ball)
         self.sprite_list.extend(self.level.bricks)
 
     def load_level(self, index):
+        # Очистка бонусов и мячей перед загрузкой нового уровня
+        self.extra_balls = arcade.SpriteList()
+        self.bonus_manager.bonuses = arcade.SpriteList()
+
         file_level = f"level{index:02}.json"
         path = os.path.join(f"assets/level_editor/{LEVELS_DIR}", file_level)
+
         if os.path.exists(path):
             self.level = Level(SCREEN_WIDTH, SCREEN_HEIGHT)
             self.level.load_from_json(path)
@@ -64,7 +69,7 @@ class GameView(arcade.View):
 
             print(f"Loaded {file_level}")
         else:
-            print(f"No  more level")
+            print(f"No more level")
             from .game_over_view import GameOverView
             self.window.show_view(GameOverView())
 
@@ -76,8 +81,13 @@ class GameView(arcade.View):
             SCREEN_WIDTH // 2 - 100,
             SCREEN_HEIGHT // 2 + 40,
             arcade.color.LIGHT_GREEN,
-            36,bold=True
+            36, bold=True
         )
+
+        self.level.on_brick_destroyed = self.handle_brick_destroyed
+
+    def handle_brick_destroyed(self, brick):
+        self.bonus_manager.maybe_drop_bonus(brick.center_x, brick.center_y)
 
     def on_show_view(self):
         arcade.set_background_color(arcade.color.BLACK)
@@ -85,64 +95,88 @@ class GameView(arcade.View):
         self.ball.parent = self
 
     def on_draw(self):
-        self.clear() # Очистка экрана
-        # Отображаем текс уровня
+        self.clear()
+
         if self.show_level_text_timer > 0:
             self.level_text.draw()
             return
 
-        if self.level_complete_text_timer <= 0: # Если уровень не завершен
-            self.sprite_list.draw() # Рисуем спрайты включая кирпичи
+        if self.level_complete_text_timer <= 0:
+            self.sprite_list.draw()
         else:
             self.level.bricks.draw()
+
         self.lives_display.draw()
         self.score_display.draw()
 
-        # Рисуем надпись Level Complete
         if self.level_complete_text_timer > 0:
             self.level_complete_view.draw()
 
+        self.bonus_manager.bonuses.draw()
+        self.extra_balls.draw()
+
     def on_update(self, delta_time: float):
-        # Начало уровня
+        # Начало уровня — ждём, не обновляем ничего
         if self.show_level_text_timer > 0:
             self.show_level_text_timer -= delta_time
-            return # Ничего не двигаем до завершения
+            return
 
-        # Конец уровня
+        # === Движение ===
         if self.level_complete_text_timer <= 0:
             self.paddle.update(delta_time)
             self.ball.update(delta_time)
             self.ball.check_collision(self.paddle)
 
-        # Обработка потери жизни если мяч упал
+            self.extra_balls.update()
+            for ball in self.extra_balls:
+                ball.check_collision(self.paddle)
+
+
+
+        # === Обновление бонусов ===
+        self.bonus_manager.update(delta_time, self)
+
+        # === Удаление упавших бонусных мячей ===
+        to_remove = [ball for ball in self.extra_balls if ball.bottom <= 0]
+        for ball in to_remove:
+            ball.remove_from_sprite_lists()
+
+        # Проверка падения основного мяча
+        main_ball_lost = False
         if self.ball.bottom <= 0:
+            self.ball.remove_from_sprite_lists()
+            main_ball_lost = True
+
+        # === Потеря жизни только если вообще нет мячей ===
+        if len(self.extra_balls) == 0 and main_ball_lost:
             self.lives_display.lose_life()
             self.paddle.start_blinking(use_scale=False)
             self.ball.reset()
+            self.sprite_list.append(self.ball)
 
-        # Обновление мигания для жизней и платформы
+        # === Обновление мигания жизни и платформы ===
         self.lives_display.update(delta_time)
 
-        # Обновление и добавление очков
-        points = self.level.check_collision(self.ball)
+        # === Коллизии с кирпичами (все мячи) ===
+        all_balls = [self.ball] + list(self.extra_balls)
+        points = self.level.check_collision(all_balls)
         if points > 0:
             self.score_display.add(points)
 
-        # Условия для показа надписи при завершении уровня
+        # === Конец уровня ===
         if self.level_complete_text_timer <= 0 and all(
-            getattr(brick, "is_indestructible", False) or brick.is_destroyed
-            for brick in self.level.bricks
+                getattr(brick, "is_indestructible", False) or brick.is_destroyed
+                for brick in self.level.bricks
         ):
             self.level_complete_text_timer = 2.0
 
-        # Таймер показа Level Complete
         if self.level_complete_text_timer > 0:
             self.level_complete_text_timer -= delta_time
             if self.level_complete_text_timer <= 0:
                 self.level_index += 1
                 self.load_level(self.level_index)
 
-        # Обработка конца игры
+        # === Конец игры ===
         if self.lives_display.current_lives == 0:
             from .game_over_view import GameOverView
             game_over_view = GameOverView()
@@ -155,19 +189,13 @@ class GameView(arcade.View):
             self.paddle.move_right()
         elif key == arcade.key.SPACE and self.ball.is_attached:
             self.ball.launch()
-
-        # return the main menu
         if key == arcade.key.ESCAPE:
-            from .menu_view import MenuView # Ленивый импорт
-            menu_view = MenuView()
-            self.window.show_view(menu_view)
-
-        # Game pause
+            from .menu_view import MenuView
+            self.window.show_view(MenuView())
         if key == arcade.key.P:
             from .pause_view import PauseView
-            pause = PauseView(self)
-            self.window.show_view(pause)
-            arcade.play_sound(sound=self.sound_pause)
+            self.window.show_view(PauseView(self))
+            arcade.play_sound(self.sound_pause)
 
     def on_key_release(self, key, modifiers):
         if key == arcade.key.LEFT:

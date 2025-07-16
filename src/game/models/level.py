@@ -4,12 +4,14 @@ import json
 from src.game.config import *
 from .brick import Brick
 
+
 class Level:
     def __init__(self, width, height, grid=None):
         self.bricks = arcade.SpriteList()
         self.width = width
         self.height = height
         self.sound_ball_brick_bounce = arcade.load_sound(SOUND_BALL_BRICK)
+        self.on_brick_destroyed = None
 
     def load_from_json(self, path):
         with open(path, "r") as f:
@@ -59,12 +61,17 @@ class Level:
     def draw(self):
         self.bricks.draw()
 
-    def check_collision(self, ball):
-        hit_list = arcade.check_for_collision_with_list(ball, self.bricks)
+    def check_collision(self, balls):
         total_points = 0
-        for brick in hit_list:
-            ball.bounce_off_brick(brick)
-            total_points += brick.hit()
-            arcade.play_sound(sound=self.sound_ball_brick_bounce, volume=SOUND_VOLUME)
-            return total_points
-        return 0
+
+        for ball in balls:
+            hit_list = arcade.check_for_collision_with_list(ball, self.bricks)
+            for brick in hit_list:
+                ball.bounce_off_brick(brick)
+                total_points += brick.hit()
+                arcade.play_sound(sound=self.sound_ball_brick_bounce, volume=SOUND_VOLUME)
+
+                if brick.is_destroyed and hasattr(self, "on_brick_destroyed"):
+                    self.on_brick_destroyed(brick)
+        return total_points
+        #return 0
