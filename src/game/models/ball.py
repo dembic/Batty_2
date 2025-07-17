@@ -1,7 +1,6 @@
 # src/game/models/ball.py
 from src.game.config import *
 import math
-import random
 
 class Ball(arcade.Sprite):
     """Класс мяча в игре Batty"""
@@ -15,6 +14,8 @@ class Ball(arcade.Sprite):
         self.is_attached = True
         self.parent = None
         self.sound_bounce = arcade.load_sound(SOUND_BOUNCE)
+        self.life_timer = None
+        self.visible_timer = 0
 
     def clone(self, angle_offset_degrees=0):
         clone = Ball()
@@ -22,6 +23,7 @@ class Ball(arcade.Sprite):
         clone.center_y = self.center_y
         clone.parent = self.parent
         clone.is_attached = False
+        clone.life_timer = 10
 
         speed = math.hypot(self.change_x, self.change_y)
         current_angle = math.atan2(self.change_y, self.change_x)
@@ -47,14 +49,30 @@ class Ball(arcade.Sprite):
 
     def update(self, delta_time: float = 1 / 60, *args, **kwargs) -> None:
         """Обновление положения мяча"""
-        if self.is_attached:
-            if self.parent and hasattr(self.parent, "paddle"):
-                paddle = self.parent.paddle
-                self.center_x = paddle.center_x
-                self.center_y = paddle.top + self.height / 2
+        # Прикреплен к платформе
+        if self.is_attached and self.parent and hasattr(self.parent, "paddle"):
+            paddle = self.parent.paddle
+            self.center_x = paddle.center_x
+            self.center_y = paddle.top + self.height / 2
             return
 
-        #self.previous_y = self.center_y
+        # Таймер жизни бонусного мяча
+        if self.life_timer is not None:
+            self.life_timer -= delta_time
+
+            # ✨ Мигание за 3 секунды до исчезновения
+            if self.life_timer <= 3:
+                self.visible_timer += delta_time
+                if self.visible_timer >= 0.2:
+                    self.visible = not self.visible
+                    self.visible_timer = 0
+
+            if self.life_timer <= 0:
+                self.remove_from_sprite_lists()
+                return
+
+        # Стандартное движение
+        self.previous_y = self.center_y
         self.center_x += self.change_x * delta_time
         self.center_y += self.change_y * delta_time
         self.angle = (self.angle + self.rotation_speed * delta_time) % 360

@@ -8,6 +8,14 @@ class BonusMultiBall(Bonus):
     @staticmethod
     def apply(game_view):
         """Создать два дополнительных мяча"""
+
+        if len(game_view.extra_balls) > 0:
+            print("MultiBall bonus ignored - already active")
+            return
+
+        print("MultiBall bonus active")
+        base_ball = game_view.ball
+
         angles = [-30, 30]
         for angle in angles:
             new_ball = game_view.ball.clone(angle_offset_degrees=angle)

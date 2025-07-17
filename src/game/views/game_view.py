@@ -131,12 +131,11 @@ class GameView(arcade.View):
             for ball in self.extra_balls:
                 ball.check_collision(self.paddle)
 
-
-
-        # === Обновление бонусов ===
+        # Обновление бонусов
         self.bonus_manager.update(delta_time, self)
 
-        # === Удаление упавших бонусных мячей ===
+
+        # Удаление упавших бонусных мячей
         to_remove = [ball for ball in self.extra_balls if ball.bottom <= 0]
         for ball in to_remove:
             ball.remove_from_sprite_lists()
@@ -148,11 +147,22 @@ class GameView(arcade.View):
             main_ball_lost = True
 
         # === Потеря жизни только если вообще нет мячей ===
-        if len(self.extra_balls) == 0 and main_ball_lost:
-            self.lives_display.lose_life()
-            self.paddle.start_blinking(use_scale=False)
-            self.ball.reset()
-            self.sprite_list.append(self.ball)
+        if main_ball_lost:
+            if len(self.extra_balls) > 0:
+                new_main_ball = self.extra_balls.pop()
+                new_main_ball.life_timer = None
+                new_main_ball.visible = True
+                self.ball = new_main_ball
+                self.ball.parent = self
+            else:
+                # Нет ни одного мяча - теряем жизнь
+                self.lives_display.lose_life()
+                self.paddle.start_blinking(use_scale=False)
+                self.ball = Ball()
+                self.ball.parent = self
+                self.ball.reset()
+                self.ball.attach_to_paddle(self.paddle)
+                self.sprite_list.append(self.ball)
 
         # === Обновление мигания жизни и платформы ===
         self.lives_display.update(delta_time)

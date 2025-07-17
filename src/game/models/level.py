@@ -61,17 +61,49 @@ class Level:
     def draw(self):
         self.bricks.draw()
 
+    def bounce_off_brick_directional(self, ball, brick):
+        dx = ball.center_x - brick.center_x
+        dy = ball.center_y - brick.center_y
+
+        overlap_x = (ball.width + brick.width) / 2 - abs(dx)
+        overlap_y = (ball.height + brick.height) / 2 - abs(dy)
+
+        if overlap_x < overlap_y:
+            # Горизонтальный отскок (слева/справа)
+            if dx > 0:
+                ball.left = brick.right + 1
+            else:
+                ball.right = brick.left - 1
+            ball.change_x *= -1
+        else:
+            # Вертикальный отскок (сверху/снизу)
+            if dy > 0:
+                ball.bottom = brick.top + 1
+            else:
+                ball.top = brick.bottom - 1
+            ball.change_y *= -1
+
     def check_collision(self, balls):
         total_points = 0
 
         for ball in balls:
             hit_list = arcade.check_for_collision_with_list(ball, self.bricks)
-            for brick in hit_list:
-                ball.bounce_off_brick(brick)
-                total_points += brick.hit()
-                arcade.play_sound(sound=self.sound_ball_brick_bounce, volume=SOUND_VOLUME)
 
-                if brick.is_destroyed and hasattr(self, "on_brick_destroyed"):
-                    self.on_brick_destroyed(brick)
+            if not hit_list:
+                continue
+
+            # Отскок только от ближайшего кирпича
+            closest_brick = min(
+                hit_list,
+                key=lambda brick: (brick.center_x - ball.center_x) ** 2 + (brick.center_y - ball.center_y) ** 2
+            )
+
+            self.bounce_off_brick_directional(ball, closest_brick)
+
+            arcade.play_sound(self.sound_ball_brick_bounce, volume=SOUND_VOLUME)
+            total_points += closest_brick.hit()
+
+            if closest_brick.is_destroyed and self.on_brick_destroyed:
+                self.on_brick_destroyed(closest_brick)
+
         return total_points
-        #return 0
