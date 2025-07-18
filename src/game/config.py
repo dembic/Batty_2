@@ -29,6 +29,9 @@ TITLE_FONT_SIZE = 48
 # for font score
 SCORE_FONT = 24
 
+# for level
+LEVEL_FONT = 24
+
 # for lives
 MAX_LIVES = 3
 X = 20
@@ -39,6 +42,8 @@ SCALE = 1.0
 # Text for game over
 GAME_OVER_TEXT = 48
 
+
+
 # For blinking
 BLINKING_INTERVAL = 0.1
 MAX_BLINKING_COUNT = 30
@@ -46,7 +51,7 @@ MAX_BLINKING_COUNT = 30
 # for sounds
 SOUND_VOLUME = 0.5
 SOUND_BOUNCE = "assets/sounds/ball_bounce.mp3"
-SOUND_BALL_BRICK = "assets/sounds/ball_brick_bounce.mp3"
+SOUND_BALL_BRICK = "assets/sounds/ball_brick_bounce.wav"
 SOUND_PAUSE = "assets/sounds/pause.mp3"
 
 # for brick

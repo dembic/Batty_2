@@ -3,7 +3,7 @@ import os.path
 
 from src.game.config import *
 from ..models import Paddle, Ball, Level
-from ..hud import LivesDisplay, ScoreDisplay
+from ..hud import LivesDisplay, ScoreDisplay, LevelDisplay
 from ..models.bonus_manager import BonusManager
 
 
@@ -30,6 +30,7 @@ class GameView(arcade.View):
             bold=True
         )
 
+        self.level_display = LevelDisplay()
         self.score_display = ScoreDisplay()
         self.lives_display = LivesDisplay(x=X, y=Y, spacing=SPACING, scale=SCALE)
 
@@ -45,10 +46,14 @@ class GameView(arcade.View):
         self.sprite_list.append(self.ball)
         self.sprite_list.extend(self.level.bricks)
 
+        self.level_display.update_level(self.level_index)
+
     def load_level(self, index):
         # Очистка бонусов и мячей перед загрузкой нового уровня
         self.extra_balls = arcade.SpriteList()
         self.bonus_manager.bonuses = arcade.SpriteList()
+
+        self.level_display.update_level(self.level_index)
 
         file_level = f"level{index:02}.json"
         path = os.path.join(f"assets/level_editor/{LEVELS_DIR}", file_level)
@@ -87,6 +92,8 @@ class GameView(arcade.View):
         self.level.on_brick_destroyed = self.handle_brick_destroyed
 
     def handle_brick_destroyed(self, brick):
+        if self.ball not in self.sprite_list:
+            return # Главный мяч упал бонусы не появятся
         self.bonus_manager.maybe_drop_bonus(brick.center_x, brick.center_y)
 
     def on_show_view(self):
@@ -114,6 +121,7 @@ class GameView(arcade.View):
 
         self.bonus_manager.bonuses.draw()
         self.extra_balls.draw()
+        self.level_display.draw()
 
     def on_update(self, delta_time: float):
         # Начало уровня — ждём, не обновляем ничего
@@ -170,6 +178,7 @@ class GameView(arcade.View):
         # === Коллизии с кирпичами (все мячи) ===
         all_balls = [self.ball] + list(self.extra_balls)
         points = self.level.check_collision(all_balls)
+        # add score
         if points > 0:
             self.score_display.add(points)
 

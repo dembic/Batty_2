@@ -2,3 +2,4 @@
 
 from .lives_display import LivesDisplay
 from .score_display import ScoreDisplay
+from .level_display import LevelDisplay

@@ -5,7 +5,7 @@ from src.game.config import *
 class ScoreDisplay:
     def __init__(self):
         self.score = 0
-        start_x = SCREEN_WIDTH - 280
+        start_x = SCREEN_WIDTH - 250
         start_y = SCREEN_HEIGHT - 30
 
         # Text
