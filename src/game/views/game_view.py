@@ -5,6 +5,7 @@ from src.game.config import *
 from ..models import Paddle, Ball, Level
 from ..hud import LivesDisplay, ScoreDisplay, LevelDisplay
 from ..models.bonus_manager import BonusManager
+from ..models.laser_beam import LaserBeam
 
 
 class GameView(arcade.View):
@@ -19,6 +20,11 @@ class GameView(arcade.View):
 
         self.bonus_manager = BonusManager()
         self.extra_balls = arcade.SpriteList()  # для дополнительных мячей
+
+        self.laser_active = False
+        self.lasers = arcade.SpriteList()
+        self.laser_timer = 0
+        self._laser_shot_timer = 0
 
         # Текст завершения уровня
         self.level_complete_view = arcade.Text(
@@ -122,6 +128,7 @@ class GameView(arcade.View):
         self.bonus_manager.bonuses.draw()
         self.extra_balls.draw()
         self.level_display.draw()
+        self.lasers.draw()
 
     def on_update(self, delta_time: float):
         # Начало уровня — ждём, не обновляем ничего
@@ -181,6 +188,35 @@ class GameView(arcade.View):
         # add score
         if points > 0:
             self.score_display.add(points)
+
+        # Лазеры обновляются
+        self.lasers.update()
+
+        # Если лазеры активны
+        if self.laser_active:
+            self.laser_timer -= delta_time
+            self._laser_shot_timer -= delta_time
+
+            if self.laser_timer <= 0:
+                self.laser_active = False
+                self.lasers = arcade.SpriteList()
+            elif self._laser_shot_timer <= 0:
+                beam1 = LaserBeam(self.paddle.left + 10, self.paddle.top)
+                beam2 = LaserBeam(self.paddle.right - 10, self.paddle.top)
+                self.lasers.append(beam1)
+                self.lasers.append(beam2)
+                self._laser_shot_timer = 0.3
+
+        # Коллизии лазеров с кирпичами
+        for laser_beam in self.lasers:
+            hit_list = arcade.check_for_collision_with_list(laser_beam, self.level.bricks)
+            if hit_list:
+                laser_beam.remove_from_sprite_lists()
+                for brick in hit_list:
+                    points = brick.hit()
+                    self.score_display.add(points)
+                    if brick.is_destroyed and hasattr(self.level, "on_brick_destroyed"):
+                        self.level.on_brick_destroyed(brick)
 
         # === Конец уровня ===
         if self.level_complete_text_timer <= 0 and all(

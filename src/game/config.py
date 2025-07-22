@@ -42,8 +42,6 @@ SCALE = 1.0
 # Text for game over
 GAME_OVER_TEXT = 48
 
-
-
 # For blinking
 BLINKING_INTERVAL = 0.1
 MAX_BLINKING_COUNT = 30
@@ -64,6 +62,12 @@ LEVELS_DIR = "levels"
 # for bonus multi ball
 BONUS_SIZE = 32
 BONUS_SPEED = -100
+BONUS_BALL_PNG = "assets/images/bonus_ball.png"
+
+# for bonus laser
+BONUS_LASER_PNG = "assets/images/bonus_laser.png"
+LASER_BEAM_PNG = "assets/images/laser_beam.png"
+SPEED_LASER_UP = 500
 
 # for colors to brick at editor
 COLOR_PALETTE = {
