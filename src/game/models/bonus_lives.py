@@ -11,9 +11,9 @@ class BonusLives(Bonus):
         self.center_x = x
         self.center_y = y
 
-    def update(self, delta_time):
+    def update(self, delta_time: float = 1/60, *args, **kwargs):
         super().update()
-        self.center_y += self.change_y
+        self.center_y += self.change_y * delta_time
 
     def apply(self, game_view):
         if game_view.lives_display.current_lives < MAX_LIVES:
