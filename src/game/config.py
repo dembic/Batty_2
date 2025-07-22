@@ -33,11 +33,13 @@ SCORE_FONT = 24
 LEVEL_FONT = 24
 
 # for lives
-MAX_LIVES = 3
+LIVES = 3
+MAX_LIVES = 5
 X = 20
 Y = 580
 SPACING = 30
 SCALE = 1.0
+LIVES_PNG = "assets/images/lives.png"
 
 # Text for game over
 GAME_OVER_TEXT = 48

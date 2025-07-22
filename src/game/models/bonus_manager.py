@@ -3,6 +3,7 @@
 import random
 from src.game.config import *
 from .bonus_laser import BonusLaser
+from .bonus_lives import BonusLives
 
 class BonusManager:
     def __init__(self):
@@ -15,17 +16,20 @@ class BonusManager:
             return
         bonus_type = []
 
+        # Только если лазер не активен — можно дропать лазер
         if not self.game_view.laser_active:
             bonus_type.append(BonusLaser)
 
+        # Только если нет мультибола — можно дропать мультибол
         if len(self.game_view.extra_balls) == 0:
             from .bonus_multi_ball import BonusMultiBall
             bonus_type.append(BonusMultiBall)
 
-        if not bonus_type:
-            return
+        # Всегда можно дропать бонус жизни
+        bonus_type.append(BonusLives)
 
-        if random.random() < 0.2:
+        # Шанс для дропа
+        if bonus_type and random.random() < 0.2:
             bonus_type = random.choice(bonus_type)
             bonus = bonus_type(x, y)
             self.bonuses.append(bonus)

@@ -5,7 +5,7 @@ from ..models.blinking import Blinking
 class LivesDisplay:
     def __init__(self, x=X, y=Y, spacing=SPACING, scale=SCALE):
         self.max_lives = MAX_LIVES
-        self.current_lives = self.max_lives
+        self.current_lives = LIVES
         self.x = x
         self.y = y
         self.spacing = spacing
@@ -16,9 +16,11 @@ class LivesDisplay:
 
         # Инициализируем спрайты жизней
         for i in range(self.max_lives):
-            sprite = Blinking("assets/images/lives.png", scale=scale)
+            sprite = Blinking(LIVES_PNG, scale=scale)
             sprite.center_x = self.x + i * self.spacing
             sprite.center_y = self.y
+            # скрываем лишние спрайты
+            sprite.alpha = 255 if i < self.current_lives else 0
             self.lives_sprites.append(sprite)
 
     def draw(self):
@@ -34,7 +36,6 @@ class LivesDisplay:
     def gain_life(self):
         if self.current_lives < self.max_lives:
             self.current_lives += 1
-            # Show last sprite
             if self.current_lives - 1 < self.max_lives:
                 self.lives_sprites[self.current_lives - 1].alpha = 255
 
