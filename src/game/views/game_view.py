@@ -26,6 +26,8 @@ class GameView(arcade.View):
         self.laser_timer = 0
         self._laser_shot_timer = 0
 
+        self.floating_texts = []
+
         # Текст завершения уровня
         self.level_complete_view = arcade.Text(
             "Level complete",
@@ -130,6 +132,11 @@ class GameView(arcade.View):
         self.level_display.draw()
         self.lasers.draw()
 
+        # floating text
+        for ft in self.floating_texts:
+            ft.draw()
+
+
     def on_update(self, delta_time: float):
         # Начало уровня — ждём, не обновляем ничего
         if self.show_level_text_timer > 0:
@@ -217,6 +224,13 @@ class GameView(arcade.View):
                     self.score_display.add(points)
                     if brick.is_destroyed and hasattr(self.level, "on_brick_destroyed"):
                         self.level.on_brick_destroyed(brick)
+
+        # Обновление всплывающих текстов
+        for ft in self.floating_texts:
+            ft.update(delta_time)
+
+        # Удаление изчезнувших текстов
+        self.floating_texts = [ft for ft in self.floating_texts if not ft.is_done()]
 
         # === Конец уровня ===
         if self.level_complete_text_timer <= 0 and all(

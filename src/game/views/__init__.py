@@ -5,6 +5,7 @@ from .game_view import GameView
 from .high_scores_view import HighScoresView
 from .settings_view import SettingsView
 
+
 __all__ = [
     'MenuView', 'GameView', 'HighScoresView', 'SettingsView'
 ]

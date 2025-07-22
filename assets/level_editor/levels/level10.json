@@ -1,62 +1,128 @@
 [
     {
-        "x": 311.0,
-        "y": 271.0,
-        "color": "red",
-        "health": 5
+        "x": 311,
+        "y": 297,
+        "color": "yellow",
+        "health": 2
     },
     {
-        "x": 425.0,
-        "y": 297.0,
-        "color": "red",
-        "health": 5
+        "x": 368,
+        "y": 297,
+        "color": "yellow",
+        "health": 2
     },
     {
-        "x": 482.0,
-        "y": 349.0,
-        "color": "red",
-        "health": 5
+        "x": 425,
+        "y": 297,
+        "color": "yellow",
+        "health": 2
     },
     {
-        "x": 368.0,
-        "y": 401.0,
-        "color": "red",
-        "health": 5
+        "x": 425,
+        "y": 323,
+        "color": "yellow",
+        "health": 2
     },
     {
-        "x": 197.0,
-        "y": 401.0,
-        "color": "red",
-        "health": 5
+        "x": 368,
+        "y": 323,
+        "color": "yellow",
+        "health": 2
     },
     {
-        "x": 368.0,
-        "y": 349.0,
-        "color": "red",
-        "health": 5
+        "x": 311,
+        "y": 323,
+        "color": "yellow",
+        "health": 2
     },
     {
-        "x": 539.0,
-        "y": 401.0,
-        "color": "red",
-        "health": 5
+        "x": 254,
+        "y": 349,
+        "color": "green",
+        "health": 1
     },
     {
-        "x": 539.0,
-        "y": 453.0,
-        "color": "red",
-        "health": 5
+        "x": 197,
+        "y": 375,
+        "color": "green",
+        "health": 1
     },
     {
-        "x": 425.0,
-        "y": 505.0,
-        "color": "red",
-        "health": 5
+        "x": 482,
+        "y": 349,
+        "color": "green",
+        "health": 1
     },
     {
-        "x": 368.0,
-        "y": 505.0,
-        "color": "red",
-        "health": 5
+        "x": 539,
+        "y": 375,
+        "color": "green",
+        "health": 1
+    },
+    {
+        "x": 368,
+        "y": 349,
+        "color": "blue",
+        "health": 1
+    },
+    {
+        "x": 368,
+        "y": 375,
+        "color": "blue",
+        "health": 1
+    },
+    {
+        "x": 368,
+        "y": 401,
+        "color": "blue",
+        "health": 1
+    },
+    {
+        "x": 311,
+        "y": 271,
+        "color": "blue",
+        "health": 1
+    },
+    {
+        "x": 311,
+        "y": 245,
+        "color": "blue",
+        "health": 1
+    },
+    {
+        "x": 425,
+        "y": 245,
+        "color": "blue",
+        "health": 1
+    },
+    {
+        "x": 425,
+        "y": 271,
+        "color": "blue",
+        "health": 1
+    },
+    {
+        "x": 140,
+        "y": 297,
+        "color": "blue",
+        "health": 1
+    },
+    {
+        "x": 596,
+        "y": 297,
+        "color": "blue",
+        "health": 1
+    },
+    {
+        "x": 596,
+        "y": 375,
+        "color": "purple",
+        "health": 2
+    },
+    {
+        "x": 140,
+        "y": 375,
+        "color": "purple",
+        "health": 2
     }
 ]
