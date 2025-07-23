@@ -24,6 +24,8 @@ BALL_COLOR = (0, 255, 0)
 
 #for enemy
 ENEMY_TEXTURE = "assets/images/enemy_demon.png"
+BOMB_TEXTURE = "assets/images/bomb_enemy.png"
+SPEED_ENEMY_BOMB = -100
 
 # for fonts
 DEFAULT_FONT_SIZE = 20

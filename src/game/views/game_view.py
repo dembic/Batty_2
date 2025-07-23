@@ -6,7 +6,7 @@ from ..models import Paddle, Ball, Level
 from ..hud import LivesDisplay, ScoreDisplay, LevelDisplay
 from ..models.bonus_manager import BonusManager
 from ..models.laser_beam import LaserBeam
-from ..models.enemy import Enemy
+from ..models.enemy_manager import EnemyManager
 
 
 class GameView(arcade.View):
@@ -48,7 +48,9 @@ class GameView(arcade.View):
         self.ball.parent = self
 
         # Враги
-        self.enemies = arcade.SpriteList()
+        self.enemy_manager = EnemyManager(self.paddle)
+        self.enemy_manager.spawn_enemy(400, 550)
+        # ========
 
         self.level = Level(SCREEN_WIDTH, SCREEN_HEIGHT)
         self.load_level(self.level_index)
@@ -80,11 +82,6 @@ class GameView(arcade.View):
             self.sprite_list.append(self.ball)
             self.sprite_list.extend(self.level.bricks)
 
-            # Враги
-            enemy = Enemy(x=400, y=400)
-            enemy.start_attack()
-            self.enemies.append(enemy)
-
             # Прекрепить мяч
             self.ball.reset()
             self.ball.attach_to_paddle(self.paddle)
@@ -112,6 +109,7 @@ class GameView(arcade.View):
         if self.ball not in self.sprite_list:
             return # Главный мяч упал бонусы не появятся
         self.bonus_manager.maybe_drop_bonus(brick.center_x, brick.center_y)
+        self.enemy_manager.on_brick_destroyed() # Враги злятся
 
     def on_show_view(self):
         arcade.set_background_color(arcade.color.BLACK)
@@ -142,7 +140,7 @@ class GameView(arcade.View):
         self.lasers.draw()
 
         # Враги
-        self.enemies.draw()
+        self.enemy_manager.draw()
 
         # floating text
         for ft in self.floating_texts:
@@ -245,10 +243,8 @@ class GameView(arcade.View):
         self.floating_texts = [ft for ft in self.floating_texts if not ft.is_done()]
 
         # Враги
-        self.enemies.update() # Если есть движение
-        self.enemies.update_animation(delta_time)
-        #for enemy in self.enemies:
-        #    print(enemy.texture)
+        self.enemy_manager.update(delta_time) # Если есть движение
+        self.enemy_manager.check_bomb_collision(self.paddle)
 
         # === Конец уровня ===
         if self.level_complete_text_timer <= 0 and all(
