@@ -6,6 +6,7 @@ from ..models import Paddle, Ball, Level
 from ..hud import LivesDisplay, ScoreDisplay, LevelDisplay
 from ..models.bonus_manager import BonusManager
 from ..models.laser_beam import LaserBeam
+from ..models.enemy import Enemy
 
 
 class GameView(arcade.View):
@@ -46,6 +47,9 @@ class GameView(arcade.View):
         self.ball = Ball()
         self.ball.parent = self
 
+        # Враги
+        self.enemies = arcade.SpriteList()
+
         self.level = Level(SCREEN_WIDTH, SCREEN_HEIGHT)
         self.load_level(self.level_index)
 
@@ -75,6 +79,11 @@ class GameView(arcade.View):
             self.sprite_list.append(self.paddle)
             self.sprite_list.append(self.ball)
             self.sprite_list.extend(self.level.bricks)
+
+            # Враги
+            enemy = Enemy(x=400, y=400)
+            enemy.start_attack()
+            self.enemies.append(enemy)
 
             # Прекрепить мяч
             self.ball.reset()
@@ -131,6 +140,9 @@ class GameView(arcade.View):
         self.extra_balls.draw()
         self.level_display.draw()
         self.lasers.draw()
+
+        # Враги
+        self.enemies.draw()
 
         # floating text
         for ft in self.floating_texts:
@@ -229,8 +241,14 @@ class GameView(arcade.View):
         for ft in self.floating_texts:
             ft.update(delta_time)
 
-        # Удаление изчезнувших текстов
+        # Удаление исчезнувших текстов
         self.floating_texts = [ft for ft in self.floating_texts if not ft.is_done()]
+
+        # Враги
+        self.enemies.update() # Если есть движение
+        self.enemies.update_animation(delta_time)
+        #for enemy in self.enemies:
+        #    print(enemy.texture)
 
         # === Конец уровня ===
         if self.level_complete_text_timer <= 0 and all(

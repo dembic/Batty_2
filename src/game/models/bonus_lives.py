@@ -10,6 +10,7 @@ class BonusLives(Bonus):
         super().__init__(LIVES_PNG, x, y)
         self.center_x = x
         self.center_y = y
+        self.change_y = -100
 
     def update(self, delta_time: float = 1/60, *args, **kwargs):
         super().update()

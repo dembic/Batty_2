@@ -22,6 +22,9 @@ BALL_SLOW_SPEED = -100
 BALL_MIN_SPEED = -80
 BALL_COLOR = (0, 255, 0)
 
+#for enemy
+ENEMY_TEXTURE = "assets/images/enemy_demon.png"
+
 # for fonts
 DEFAULT_FONT_SIZE = 20
 TITLE_FONT_SIZE = 48
