@@ -11,6 +11,7 @@ class Blinking(arcade.Sprite):
         self.blink_count = 0
         self.max_blink_count = MAX_BLINKING_COUNT
         self.is_blinking = False
+        self.is_disabled = False
         self.blink_timer = 0.0
         if isinstance(self.scale, (tuple, list)):
             self.base_scale = (float(self.scale[0]) + float(self.scale[1])) / 2 if len (self.scale) >= 2 else float(self.scale[0]) if self.scale else 1.0
@@ -21,6 +22,7 @@ class Blinking(arcade.Sprite):
 
     def start_blinking(self, use_scale=False):
         self.is_blinking = True
+        self.is_disabled = False # Отключение движения ракетки например при негативном бонусе (заморозка)
         self.blink_count = 0
         self.use_scale_blink = use_scale
         if self.use_scale_blink:
@@ -49,6 +51,7 @@ class Blinking(arcade.Sprite):
             # Завершение мигания
             if self.blink_count >= self.max_blink_count:
                 self.is_blinking = False
+                self.is_disabled = False # передвижение работает
                 if self.use_scale_blink:
                     self.alpha = 0 # Скрываем объект полностью для жизней
                     self.scale = (self.base_scale, self.base_scale)

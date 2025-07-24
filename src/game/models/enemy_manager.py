@@ -5,12 +5,19 @@ from src.game.models.enemy import Enemy, EnemyState
 from src.game.models.bomb import Bomb
 
 
+
 class EnemyManager:
     def __init__(self, paddle):
+        self.sound = arcade.load_sound(BOMB_TO_PADDLE_SOUND)
+        self.ball = None
         self.enemies = arcade.SpriteList()
         self.bombs = arcade.SpriteList()
         self.paddle = paddle
-
+        
+        
+    def set_ball(self, ball):
+        self.ball = ball
+        
     def spawn_enemy(self, x, y):
         enemy = Enemy(x, y)
         enemy.target = self.paddle
@@ -33,22 +40,24 @@ class EnemyManager:
         self.bombs.update()
         self.remove_dead()
 
-    def update_bombs(self):
+    def update_bombs(self, lives_display=None):
         for bomb in self.bombs:
             bomb.update()
 
-            # Бомба улетела вниз
             if bomb.bottom < 0:
                 bomb.remove_from_sprite_lists()
-                if hasattr(bomb, "owner") and bomb.owner:
+                if bomb.owner:
                     bomb.owner.active_bomb = None
+                continue
 
-            # Столкновение с ракеткой
-            if arcade.check_for_collision(bomb, self.paddle):
+            if lives_display and bomb.collides_with_sprite(self.paddle) and not self.paddle.is_blinking:
                 bomb.remove_from_sprite_lists()
-                if hasattr(bomb, "owner") and bomb.owner:
+                if bomb.owner:
                     bomb.owner.active_bomb = None
-                # Тут вызываем повреждения
+                arcade.play_sound(self.sound, volume=SOUND_VOLUME)
+                self.paddle.start_blinking(use_scale=False)
+                lives_display.lose_life()
+                self.ball.attach_to_paddle(self.paddle)
 
     def draw(self):
         self.enemies.draw()
@@ -58,18 +67,11 @@ class EnemyManager:
         for enemy in self.enemies:
             enemy.on_brick_destroyed()
 
-    def check_bomb_collision(self, paddle):
-        for bomb in self.bombs:
-            if bomb.collides_with_sprite(paddle):
-                if bomb.owner:
-                    bomb.owner.active_bomb = None
-                bomb.remove_from_sprite_lists()
-                # Реакция попадания по ракетке
-                if hasattr(paddle, "on_hit"):
-                    paddle.on_hit()
+
 
     def clear(self):
         self.enemies = arcade.SpriteList()
+        self.bombs = arcade.SpriteList()
 
     def remove_dead(self):
         for enemy in self.enemies:

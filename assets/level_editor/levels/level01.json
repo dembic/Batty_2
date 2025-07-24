@@ -24,12 +24,6 @@
         "health": 2
     },
     {
-        "x": 140.0,
-        "y": 427.0,
-        "color": "gray",
-        "health": 2
-    },
-    {
         "x": 197.0,
         "y": 427.0,
         "color": "gray",
@@ -78,12 +72,6 @@
         "health": 2
     },
     {
-        "x": 653.0,
-        "y": 427.0,
-        "color": "gray",
-        "health": 2
-    },
-    {
         "x": 539.0,
         "y": 375.0,
         "color": "purple",
@@ -538,5 +526,17 @@
         "y": 245.0,
         "color": "red",
         "health": 5
+    },
+    {
+        "x": 140,
+        "y": 427,
+        "color": "yellow",
+        "health": 2
+    },
+    {
+        "x": 653,
+        "y": 427,
+        "color": "yellow",
+        "health": 2
     }
 ]

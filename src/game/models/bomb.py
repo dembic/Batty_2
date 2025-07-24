@@ -11,7 +11,7 @@ class Bomb(arcade.Sprite):
         self.owner = None
 
     def update(self, delta_time: float = 1 / 60, *args, **kwargs) -> None:
-        self.center_y += self.change_y * delta_time
+        self.center_y += self.change_y * delta_time * 0.7
         if self.bottom < 0:
             self.remove_from_sprite_lists()
             if self.owner:

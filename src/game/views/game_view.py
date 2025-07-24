@@ -49,7 +49,9 @@ class GameView(arcade.View):
 
         # Враги
         self.enemy_manager = EnemyManager(self.paddle)
+        self.enemy_manager.set_ball(self.ball)
         self.enemy_manager.spawn_enemy(400, 550)
+        self.lives_display = LivesDisplay()
         # ========
 
         self.level = Level(SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -244,7 +246,10 @@ class GameView(arcade.View):
 
         # Враги
         self.enemy_manager.update(delta_time) # Если есть движение
-        self.enemy_manager.check_bomb_collision(self.paddle)
+        self.enemy_manager.update_bombs(self.lives_display)
+        self.enemy_manager.update_bombs()
+
+
 
         # === Конец уровня ===
         if self.level_complete_text_timer <= 0 and all(
@@ -264,6 +269,8 @@ class GameView(arcade.View):
             from .game_over_view import GameOverView
             game_over_view = GameOverView()
             self.window.show_view(game_over_view)
+
+
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.LEFT:

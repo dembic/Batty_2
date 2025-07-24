@@ -54,12 +54,12 @@ class Paddle(Blinking):
 
     def move_left(self):
         """Move the paddle left"""
-        if not self.is_blinking: # Разрешаем движение только если не мигаем
+        if not self.is_disabled: # Разрешаем движение
             self.moving_left = True
 
     def move_right(self):
         """Move the paddle right"""
-        if not self.is_blinking:
+        if not self.is_disabled:
             self.moving_right = True
 
     def stop_left(self):

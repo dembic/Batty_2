@@ -27,6 +27,7 @@ ENEMY_TEXTURE = "assets/images/enemy_demon.png"
 BOMB_TEXTURE = "assets/images/bomb_enemy.png"
 SPEED_ENEMY_BOMB = -100
 
+
 # for fonts
 DEFAULT_FONT_SIZE = 20
 TITLE_FONT_SIZE = 48
@@ -58,6 +59,7 @@ SOUND_VOLUME = 0.5
 SOUND_BOUNCE = "assets/sounds/ball_bounce.mp3"
 SOUND_BALL_BRICK = "assets/sounds/ball_brick_bounce.wav"
 SOUND_PAUSE = "assets/sounds/pause.mp3"
+BOMB_TO_PADDLE_SOUND = "assets/sounds/hit_bomb.wav"
 
 # for brick
 BRICK_WIDTH = 53
