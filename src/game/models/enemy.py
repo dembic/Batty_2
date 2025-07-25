@@ -68,9 +68,15 @@ class Enemy(arcade.Sprite):
             return
 
         if self.brick_destroyed_recently:
+
             if self.target:
                 # Следует за ракеткой
-                self.center_x += (self.target.center_x - self.center_x) * delta_time * 0.6
+                dx = self.target.center_x - self.center_x
+                self.mirror_towards(dx)
+                self.center_x += dx * delta_time * 0.6
+                self.state = EnemyState.ATTACK
+
+
             self.patrol_timer += delta_time
             if self.patrol_timer > 2.0:
                 self.brick_destroyed_recently = False
@@ -81,16 +87,14 @@ class Enemy(arcade.Sprite):
             if self.left < 0 or self.right > SCREEN_WIDTH:
                 self.patrol_direction *= -1
 
-            if self.patrol_direction < 0:
-                self.scale = abs(self.scale) if isinstance(self.scale, (int, float)) else (abs(self.scale[0]), self.scale[1])
-            else:
-                self.scale = -abs(self.scale) if isinstance(self.scale, (int, float)) else (-abs(self.scale[0]), self.scale[1])
+            # Отзеркаливание спрайта
+            self.mirror_towards(self.patrol_direction)
 
             # Шанс сбросить бомбу при патруле
-            if self.state == EnemyState.IDLE and self.attack_cooldown <= 0 and self.active_bomb is None:
-                if random.random() < 0.001: # 0.1% процента каждую итерацию
+            if self.state in (EnemyState.IDLE, EnemyState.FLYING) and self.attack_cooldown <= 0 and self.active_bomb is None:
+                if random.random() < 0.005: # 0.5% процента каждую итерацию
                     self.start_attack()
-                    self.attack_cooldown = 10.0
+                    self.attack_cooldown = 3.0
 
             # Плавно вниз при атаке
             if self.state == EnemyState.ATTACK:
@@ -151,6 +155,13 @@ class Enemy(arcade.Sprite):
 
             self.texture = frames[self.frame_index]
 
+    def mirror_towards(self, dx: float):
+        if dx > 0:
+            self.scale = -abs(self.scale) if isinstance(self.scale, (int, float)) else (-abs(self.scale[0]),
+                                                                                       self.scale[1])
+        elif dx < 0:
+            self.scale = abs(self.scale) if isinstance(self.scale, (int, float)) else (abs(self.scale[0]),
+                                                                                        self.scale[1])
     def on_brick_destroyed(self):
         self.brick_destroyed_recently = True
         if self.state != EnemyState.DEATH and self.attack_cooldown <= 0 and self.active_bomb is None:
