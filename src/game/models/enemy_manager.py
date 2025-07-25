@@ -27,7 +27,7 @@ class EnemyManager:
 
     def throw_bomb(self, x, y, enemy):
         if enemy.active_bomb is None:
-            bomb = Bomb(x, y)
+            bomb = Bomb(x + 10, y + 15)
             bomb.owner = enemy
             enemy.active_bomb = bomb
             self.bombs.append(bomb)

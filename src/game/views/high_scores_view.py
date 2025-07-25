@@ -30,7 +30,7 @@ class HighScoresView(arcade.View):
     def on_draw(self):
         self.clear()
         self.font_high_scores.draw()
-        for i, entry in enumerate(self.score):
+        for i, entry in enumerate(self.score[:10]):
             text = f"{i + 1}. {entry['name']} - {entry['score']}"
             arcade.draw_text(text, SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT - 150 - i * 40, arcade.color.YELLOW, 24)
 
