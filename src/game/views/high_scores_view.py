@@ -2,12 +2,14 @@
 
 from src.game.config import *
 from src.game import *
+from src.game.utils.high_score_manager import HighScoreManager
 
 # Экран для отображения рекордов очков
 class HighScoresView(arcade.View):
     def __init__(self):
         super().__init__()
         self.manager = arcade.gui.UIManager()
+        self.score = HighScoreManager().load_scores()
 
         # Text
         start_x = SCREEN_WIDTH // 2 - 80
@@ -19,22 +21,7 @@ class HighScoresView(arcade.View):
             arcade.color.FRENCH_WINE,
             DEFAULT_FONT_SIZE, bold=True
         )
-        self.high_scores = self.load_high_scores()
-        self.score_texts = [
-            arcade.Text(f"{i+1}.     {score}", start_x, start_y - 50 - i * 30, arcade.color.AQUA,
-                        DEFAULT_FONT_SIZE, bold=True)
-            for i, score in enumerate(self.high_scores)
-        ]
 
-    def load_high_scores(self):
-        path = "assets/high_scores.txt"
-        try:
-            with open(path, "r") as f:
-                scores = [int(line.strip()) for line in f.readlines()]
-                return sorted(scores, reverse=True)[:10]
-        except FileNotFoundError:
-            print("No high scores file")
-            return []
 
     def on_show_view(self):
         arcade.set_background_color(arcade.color.BLACK)
@@ -43,8 +30,10 @@ class HighScoresView(arcade.View):
     def on_draw(self):
         self.clear()
         self.font_high_scores.draw()
-        for score in self.score_texts:
-            score.draw()
+        for i, entry in enumerate(self.score):
+            text = f"{i + 1}. {entry['name']} - {entry['score']}"
+            arcade.draw_text(text, SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT - 150 - i * 40, arcade.color.YELLOW, 24)
+
 
     def on_key_press(self, key, modifiers):
         """Handle keyboard input to return menu."""

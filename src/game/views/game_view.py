@@ -267,7 +267,7 @@ class GameView(arcade.View):
         # === Конец игры ===
         if self.lives_display.current_lives == 0:
             from .game_over_view import GameOverView
-            game_over_view = GameOverView()
+            game_over_view = GameOverView(self.score_display.score)
             self.window.show_view(game_over_view)
 
 
