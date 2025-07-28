@@ -38,6 +38,9 @@ class EnemyManager:
         self.enemies.update()
         self.enemies.update_animation(delta_time)
         self.bombs.update()
+        for bomb in self.bombs:
+            bomb.update_animation(delta_time)
+
         self.remove_dead()
 
     def update_bombs(self, lives_display=None):

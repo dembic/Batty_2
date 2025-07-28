@@ -29,7 +29,7 @@ class BonusManager:
         bonus_type.append(BonusLives)
 
         # Шанс для дропа
-        if bonus_type and random.random() < 0.2:
+        if bonus_type and random.random() < 0.8:
             bonus_type = random.choice(bonus_type)
             bonus = bonus_type(x, y)
             self.bonuses.append(bonus)

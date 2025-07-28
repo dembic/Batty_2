@@ -22,9 +22,9 @@ class GameView(arcade.View):
         self.bonus_manager = BonusManager()
         self.extra_balls = arcade.SpriteList()  # для дополнительных мячей
 
-        self.laser_active = False
+        self.laser_active = True
         self.lasers = arcade.SpriteList()
-        self.laser_timer = 0
+        self.laser_timer = 9999
         self._laser_shot_timer = 0
 
         self.floating_texts = []
@@ -93,7 +93,7 @@ class GameView(arcade.View):
         else:
             print(f"No more level")
             from .game_over_view import GameOverView
-            self.window.show_view(GameOverView())
+            self.window.show_view(GameOverView(self))
 
         # Текст для начала уровня
         self.show_level_text_timer = 2
@@ -211,6 +211,8 @@ class GameView(arcade.View):
 
         # Лазеры обновляются
         self.lasers.update()
+        for laser in self.lasers:
+            laser.update_animation(delta_time)
 
         # Если лазеры активны
         if self.laser_active:

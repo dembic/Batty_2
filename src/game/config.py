@@ -13,6 +13,9 @@ PADDLE_UP_Y = 30
 PADDLE_SPEED = 300
 PADDLE_COLOR = (0, 0, 255)
 
+# for laser
+LASER_BEAM_SPRITESHEET = "assets/images/laser_beam_spritesheet.png"
+
 # Ball
 BALL_WIDTH = 30
 BALL_HEIGHT = 30
@@ -25,6 +28,7 @@ BALL_COLOR = (0, 255, 0)
 #for enemy
 ENEMY_TEXTURE = "assets/images/enemy_demon.png"
 BOMB_TEXTURE = "assets/images/bomb_enemy.png"
+BOMB_SPRITESHEET = "assets/images/bomb_spritesheet.png"
 SPEED_ENEMY_BOMB = -100
 
 
