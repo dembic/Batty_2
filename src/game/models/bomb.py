@@ -16,3 +16,6 @@ class Bomb(arcade.Sprite):
             self.remove_from_sprite_lists()
             if self.owner:
                 self.owner.active_bomb = None
+
+    def destroy(self):
+        self.remove_from_sprite_lists()

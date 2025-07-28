@@ -50,7 +50,7 @@ class GameView(arcade.View):
         # Враги
         self.enemy_manager = EnemyManager(self.paddle)
         self.enemy_manager.set_ball(self.ball)
-        self.enemy_manager.spawn_enemy(400, 550)
+        #self.enemy_manager.spawn_enemy(400, 550)
         self.lives_display = LivesDisplay()
         # ========
 
@@ -83,6 +83,7 @@ class GameView(arcade.View):
             self.sprite_list.append(self.paddle)
             self.sprite_list.append(self.ball)
             self.sprite_list.extend(self.level.bricks)
+            self.enemy_manager.spawn_enemy(400, 550)
 
             # Прекрепить мяч
             self.ball.reset()
@@ -257,6 +258,8 @@ class GameView(arcade.View):
                 for brick in self.level.bricks
         ):
             self.level_complete_text_timer = 2.0
+            print("Level Complete")
+            self.enemy_manager.clear()
 
         if self.level_complete_text_timer > 0:
             self.level_complete_text_timer -= delta_time
@@ -267,6 +270,7 @@ class GameView(arcade.View):
         # === Конец игры ===
         if self.lives_display.current_lives == 0:
             from .game_over_view import GameOverView
+
             game_over_view = GameOverView(self.score_display.score)
             self.window.show_view(game_over_view)
 
