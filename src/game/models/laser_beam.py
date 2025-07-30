@@ -4,7 +4,7 @@ from arcade import SpriteSheet
 from src.game.config import *
 
 class LaserBeam(arcade.Sprite):
-    def __init__(self, x, y, scale=0.3):
+    def __init__(self, x, y, scale=0.7):
         super().__init__(scale=scale)
         self.center_x = x
         self.center_y = y
@@ -13,9 +13,9 @@ class LaserBeam(arcade.Sprite):
         # Загружаем спрайтшит и нарезаем
         self.sprite_sheet = SpriteSheet(LASER_BEAM_SPRITESHEET)
         self.textures = self.sprite_sheet.get_texture_grid(
-            size=(33, 404),
-            columns=3,
-            count=9
+            size=(20, 76),
+            columns=5,
+            count=5
         )
 
         self.frame_index =0

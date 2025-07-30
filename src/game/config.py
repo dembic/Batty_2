@@ -14,7 +14,7 @@ PADDLE_SPEED = 300
 PADDLE_COLOR = (0, 0, 255)
 
 # for laser
-LASER_BEAM_SPRITESHEET = "assets/images/laser_beam_spritesheet.png"
+LASER_BEAM_SPRITESHEET = "assets/images/laser_beam-sheet.png"
 
 # Ball
 BALL_WIDTH = 30
