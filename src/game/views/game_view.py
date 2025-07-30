@@ -22,9 +22,9 @@ class GameView(arcade.View):
         self.bonus_manager = BonusManager()
         self.extra_balls = arcade.SpriteList()  # для дополнительных мячей
 
-        self.laser_active = True
+        self.laser_active = False
         self.lasers = arcade.SpriteList()
-        self.laser_timer = 9999
+        self.laser_timer = 0
         self._laser_shot_timer = 0
 
         self.floating_texts = []
