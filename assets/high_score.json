@@ -1,6 +1,10 @@
 [
     {
         "name": "Dim",
+        "score": 11820
+    },
+    {
+        "name": "Dim",
         "score": 5620
     },
     {
@@ -34,9 +38,5 @@
     {
         "name": "lyosic",
         "score": 1430
-    },
-    {
-        "name": "Anonymous",
-        "score": 1400
     }
 ]
